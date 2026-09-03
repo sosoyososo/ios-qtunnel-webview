@@ -2,12 +2,12 @@ import SwiftUI
 
 @main
 struct QtunnelApp: App {
+    @State private var env = AppEnvironment()
+
     var body: some Scene {
         WindowGroup {
-            // UI root 将在 P7 替换
-            Text("Qtunnel")
-                .font(DS.Font.title)
-                .foregroundStyle(DS.Color.labelPrimary)
+            ServerListView()
+                .environment(env)
         }
     }
 }
