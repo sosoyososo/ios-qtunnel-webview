@@ -7,11 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		107F0A411CB0EBB6C7814D1A /* KeyDerivation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C878BE8AB7C890741D63FD4B /* KeyDerivation.swift */; };
 		15888598639065B21A052194 /* Password.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1D9703053E694DF9D9B7B0 /* Password.swift */; };
+		1BFAC3789D37274476026EF7 /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E5D2C172742B92859D2C96 /* StoreTests.swift */; };
+		2F88751D6279228C9A743F86 /* WebViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE2B93AA06DE0C0933C3D38 /* WebViewState.swift */; };
+		2FD47ED596DDAE8B90235A14 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C556C466DC396F7E7CF0A9 /* Server.swift */; };
+		5044AAE7C0ED25725F445764 /* ClientInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948C4450920B4525543B55D /* ClientInstance.swift */; };
+		57D3ED93979E5A22153D28DF /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3954BD928A1673AC38C8C34 /* Keys.swift */; };
 		5B5BFC4D25A70D5812385908 /* ServerCmd.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF44707E2712A711681F8A37 /* ServerCmd.swift */; };
+		6BACFF590456BAF38E950C0D /* RC4CipherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */; };
 		77C1142AE33201308764A799 /* QtunnelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FE4918DFADD07F06F6F7E8 /* QtunnelApp.swift */; };
+		8C4AEB99EA263E6126F1B817 /* KeyDerivationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6528DC0E2C49F40310B7E7 /* KeyDerivationTests.swift */; };
+		8C7DB2682B3A2B2CCDE646C4 /* StatusProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88C6C582DCD15AFF9A83D57 /* StatusProbe.swift */; };
+		8E62BA42FB244936759FD8E6 /* CryptoMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58543C2EC04D38752067AB74 /* CryptoMethod.swift */; };
 		90F27FE1B2F18FC62B52EF12 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFBF0EEC11E1B16A4A7A39B /* Log.swift */; };
 		96CEE7F769346FE30EABDCDF /* DS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BF1523A3C6E573E1AD8C28 /* DS.swift */; };
+		9D4EA75A3BE48ECF5CF72550 /* TCPForwarder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F445FE8815D8EF3A01D55456 /* TCPForwarder.swift */; };
+		ACD26350031D6818F736FCAB /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA65377F4538BC916FA927DD /* Store.swift */; };
+		B2A47DE3B7D306A9BEA94A88 /* TunnelConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5854FF1B74F921D0AA78AE /* TunnelConnection.swift */; };
+		B448BBD217E626ABD659848F /* Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3BBD2D4CF94CC704688F8A /* Cipher.swift */; };
+		BE959F2DDDAF1A48C1A12764 /* LocalListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADDA2E01CC6D26E094B9D7D /* LocalListener.swift */; };
+		C16890B4486E0C1E7238FC38 /* RC4Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */; };
+		DBF148B07CC8962B691824F0 /* ClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE27B9C36621CB52E6B49F6 /* ClientConfig.swift */; };
+		E37CB623C3426242CA5BF47A /* StatusProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8888EA6ACE01989BE0EEABF /* StatusProbeTests.swift */; };
+		E8386D560E48B72C03EAB245 /* AES256CFBCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BA349C353601A73D7A9B26 /* AES256CFBCipher.swift */; };
+		ECCC52C76DE924290046F790 /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475E12DF091456EC7C50EF01 /* Heartbeat.swift */; };
+		EF425F06515B75001CC03766 /* AES256CFBCipherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F9BCE18CAE224D4DE2B48E /* AES256CFBCipherTests.swift */; };
 		F48DD77754711E74FE445971 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470324602C211C27ACF6BC8 /* Placeholder.swift */; };
 /* End PBXBuildFile section */
 
@@ -26,21 +47,45 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F5854FF1B74F921D0AA78AE /* TunnelConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelConnection.swift; sourceTree = "<group>"; };
+		475E12DF091456EC7C50EF01 /* Heartbeat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
+		4948C4450920B4525543B55D /* ClientInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientInstance.swift; sourceTree = "<group>"; };
 		4DFBF0EEC11E1B16A4A7A39B /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		4FE27B9C36621CB52E6B49F6 /* ClientConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientConfig.swift; sourceTree = "<group>"; };
 		5470324602C211C27ACF6BC8 /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
+		58543C2EC04D38752067AB74 /* CryptoMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoMethod.swift; sourceTree = "<group>"; };
 		6B815D8716CD1F5BEF1641BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7ADDA2E01CC6D26E094B9D7D /* LocalListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalListener.swift; sourceTree = "<group>"; };
+		91BA349C353601A73D7A9B26 /* AES256CFBCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES256CFBCipher.swift; sourceTree = "<group>"; };
 		A6B7D5BFC06DB9FBA779C299 /* QtunnelTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QtunnelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6FE4918DFADD07F06F6F7E8 /* QtunnelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QtunnelApp.swift; sourceTree = "<group>"; };
+		AA65377F4538BC916FA927DD /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		B4BF1523A3C6E573E1AD8C28 /* DS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DS.swift; sourceTree = "<group>"; };
+		B88C6C582DCD15AFF9A83D57 /* StatusProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusProbe.swift; sourceTree = "<group>"; };
+		B9E5D2C172742B92859D2C96 /* StoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTests.swift; sourceTree = "<group>"; };
 		BB1D9703053E694DF9D9B7B0 /* Password.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Password.swift; sourceTree = "<group>"; };
+		C2F9BCE18CAE224D4DE2B48E /* AES256CFBCipherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES256CFBCipherTests.swift; sourceTree = "<group>"; };
+		C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RC4CipherTests.swift; sourceTree = "<group>"; };
+		C878BE8AB7C890741D63FD4B /* KeyDerivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivation.swift; sourceTree = "<group>"; };
+		C8888EA6ACE01989BE0EEABF /* StatusProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusProbeTests.swift; sourceTree = "<group>"; };
+		CA3BBD2D4CF94CC704688F8A /* Cipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cipher.swift; sourceTree = "<group>"; };
 		CE033D1210CD8506DD81F698 /* Qtunnel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qtunnel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RC4Cipher.swift; sourceTree = "<group>"; };
 		DF44707E2712A711681F8A37 /* ServerCmd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCmd.swift; sourceTree = "<group>"; };
+		E8C556C466DC396F7E7CF0A9 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		EEE2B93AA06DE0C0933C3D38 /* WebViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewState.swift; sourceTree = "<group>"; };
+		F3954BD928A1673AC38C8C34 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		F445FE8815D8EF3A01D55456 /* TCPForwarder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPForwarder.swift; sourceTree = "<group>"; };
+		FA6528DC0E2C49F40310B7E7 /* KeyDerivationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		150D7407ED52B275D1C935D2 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				7ADDA2E01CC6D26E094B9D7D /* LocalListener.swift */,
+				B88C6C582DCD15AFF9A83D57 /* StatusProbe.swift */,
+				F445FE8815D8EF3A01D55456 /* TCPForwarder.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -48,6 +93,12 @@
 		1582613BC4E428C3A635ABBA /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
+				91BA349C353601A73D7A9B26 /* AES256CFBCipher.swift */,
+				CA3BBD2D4CF94CC704688F8A /* Cipher.swift */,
+				475E12DF091456EC7C50EF01 /* Heartbeat.swift */,
+				C878BE8AB7C890741D63FD4B /* KeyDerivation.swift */,
+				D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */,
+				2F5854FF1B74F921D0AA78AE /* TunnelConnection.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -97,6 +148,11 @@
 		388F7A7CE7A20D86E8D85AC1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				4FE27B9C36621CB52E6B49F6 /* ClientConfig.swift */,
+				4948C4450920B4525543B55D /* ClientInstance.swift */,
+				58543C2EC04D38752067AB74 /* CryptoMethod.swift */,
+				E8C556C466DC396F7E7CF0A9 /* Server.swift */,
+				EEE2B93AA06DE0C0933C3D38 /* WebViewState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -121,7 +177,12 @@
 		C3A9F23837D1F346D0D88047 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C2F9BCE18CAE224D4DE2B48E /* AES256CFBCipherTests.swift */,
+				FA6528DC0E2C49F40310B7E7 /* KeyDerivationTests.swift */,
 				5470324602C211C27ACF6BC8 /* Placeholder.swift */,
+				C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */,
+				C8888EA6ACE01989BE0EEABF /* StatusProbeTests.swift */,
+				B9E5D2C172742B92859D2C96 /* StoreTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -129,6 +190,8 @@
 		CF0B996A299419AC61094EFB /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				F3954BD928A1673AC38C8C34 /* Keys.swift */,
+				AA65377F4538BC916FA927DD /* Store.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -219,11 +282,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8386D560E48B72C03EAB245 /* AES256CFBCipher.swift in Sources */,
+				B448BBD217E626ABD659848F /* Cipher.swift in Sources */,
+				DBF148B07CC8962B691824F0 /* ClientConfig.swift in Sources */,
+				5044AAE7C0ED25725F445764 /* ClientInstance.swift in Sources */,
+				8E62BA42FB244936759FD8E6 /* CryptoMethod.swift in Sources */,
 				96CEE7F769346FE30EABDCDF /* DS.swift in Sources */,
+				ECCC52C76DE924290046F790 /* Heartbeat.swift in Sources */,
+				107F0A411CB0EBB6C7814D1A /* KeyDerivation.swift in Sources */,
+				57D3ED93979E5A22153D28DF /* Keys.swift in Sources */,
+				BE959F2DDDAF1A48C1A12764 /* LocalListener.swift in Sources */,
 				90F27FE1B2F18FC62B52EF12 /* Log.swift in Sources */,
 				15888598639065B21A052194 /* Password.swift in Sources */,
 				77C1142AE33201308764A799 /* QtunnelApp.swift in Sources */,
+				C16890B4486E0C1E7238FC38 /* RC4Cipher.swift in Sources */,
+				2FD47ED596DDAE8B90235A14 /* Server.swift in Sources */,
 				5B5BFC4D25A70D5812385908 /* ServerCmd.swift in Sources */,
+				8C7DB2682B3A2B2CCDE646C4 /* StatusProbe.swift in Sources */,
+				ACD26350031D6818F736FCAB /* Store.swift in Sources */,
+				9D4EA75A3BE48ECF5CF72550 /* TCPForwarder.swift in Sources */,
+				B2A47DE3B7D306A9BEA94A88 /* TunnelConnection.swift in Sources */,
+				2F88751D6279228C9A743F86 /* WebViewState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,7 +310,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF425F06515B75001CC03766 /* AES256CFBCipherTests.swift in Sources */,
+				8C4AEB99EA263E6126F1B817 /* KeyDerivationTests.swift in Sources */,
 				F48DD77754711E74FE445971 /* Placeholder.swift in Sources */,
+				6BACFF590456BAF38E950C0D /* RC4CipherTests.swift in Sources */,
+				E37CB623C3426242CA5BF47A /* StatusProbeTests.swift in Sources */,
+				1BFAC3789D37274476026EF7 /* StoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
