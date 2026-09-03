@@ -3,62 +3,82 @@ import CommonCrypto
 
 /// AES-256-CFB 流密码 — CommonCrypto 包装
 /// 关键：IV = key[:16]（与 qtunnel-server 一致）
+/// encrypt / decrypt 各自独立 cryptor（与 Go 一致）
 final class AES256CFBCipher: Cipher, @unchecked Sendable {
 
     private let key: [UInt8]
     private let iv: [UInt8]
     private let lock = NSLock()
+    private var encCryptor: CCCryptorRef?
+    private var decCryptor: CCCryptorRef?
 
     init(key: [UInt8]) {
         precondition(key.count == 32, "AES-256 key must be 32 bytes")
         self.key = key
         self.iv = Array(key.prefix(16))
+        self.encCryptor = makeCryptor(op: CCOperation(kCCEncrypt))
+        self.decCryptor = makeCryptor(op: CCOperation(kCCDecrypt))
+    }
+
+    deinit {
+        if let c = encCryptor { CCCryptorRelease(c) }
+        if let c = decCryptor { CCCryptorRelease(c) }
     }
 
     func encrypt(_ data: inout [UInt8]) {
-        process(&data, op: kCCEncrypt)
+        process(&data, cryptor: encCryptor)
     }
 
     func decrypt(_ data: inout [UInt8]) {
-        process(&data, op: kCCDecrypt)
+        process(&data, cryptor: decCryptor)
     }
 
-    private func process(_ data: inout [UInt8], op: CCOperation) {
-        lock.lock()
-        defer { lock.unlock() }
+    // MARK: - Private
 
+    private func makeCryptor(op: CCOperation) -> CCCryptorRef? {
         var cryptor: CCCryptorRef?
         let status = key.withUnsafeBufferPointer { keyPtr in
             iv.withUnsafeBufferPointer { ivPtr in
-                CCCryptorCreateWithMode(
+                guard let keyBase = keyPtr.baseAddress, let ivBase = ivPtr.baseAddress else {
+                    return Int32(kCCAlignmentError)
+                }
+                return CCCryptorCreateWithMode(
                     op,
-                    kCCModeCFB,
-                    kCCAlgorithmAES,
-                    ccNoPadding,
-                    ivPtr.baseAddress,
-                    keyPtr.baseAddress, key.count,
+                    CCMode(kCCModeCFB),
+                    CCAlgorithm(kCCAlgorithmAES),
+                    CCPadding(ccNoPadding),
+                    ivBase,
+                    keyBase, key.count,
                     nil, 0, 0,
                     CCModeOptions(kCCModeOptionCTR_BE),
                     &cryptor
                 )
             }
         }
-        guard status == kCCSuccess, let cryptor else {
-            Log.error("Cipher", "CCCryptorCreateWithMode failed: \(status)")
-            return
+        if status != kCCSuccess {
+            Log.error("Cipher", "CCCryptorCreateWithMode(\(op)) failed: \(status)")
+            return nil
         }
-        defer { CCCryptorRelease(cryptor) }
+        return cryptor
+    }
 
-        let bufSize = CCCryptorGetOutputLength(cryptor, data.count, true)
+    private func process(_ data: inout [UInt8], cryptor: CCCryptorRef?) {
+        guard let cryptor else { return }
+        lock.lock()
+        defer { lock.unlock() }
+
+        let input = data  // 拷贝避免 inout 重叠
+        let bufSize = CCCryptorGetOutputLength(cryptor, input.count, true)
         var out = [UInt8](repeating: 0, count: bufSize)
         var bytesOut = 0
 
-        let updateStatus = data.withUnsafeMutableBufferPointer { dataPtr in
+        let updateStatus = input.withUnsafeBufferPointer { dataPtr in
             out.withUnsafeMutableBufferPointer { outPtr in
-                CCCryptorUpdate(
+                guard let outBase = outPtr.baseAddress else { return Int32(kCCAlignmentError) }
+                return CCCryptorUpdate(
                     cryptor,
-                    dataPtr.baseAddress, data.count,
-                    outPtr.baseAddress, bufSize,
+                    dataPtr.baseAddress, dataPtr.count,
+                    outBase, bufSize,
                     &bytesOut
                 )
             }
@@ -70,9 +90,10 @@ final class AES256CFBCipher: Cipher, @unchecked Sendable {
 
         var finalOut = 0
         let finalStatus = out.withUnsafeMutableBufferPointer { outPtr in
-            CCCryptorFinal(
+            guard let outBase = outPtr.baseAddress else { return Int32(kCCAlignmentError) }
+            return CCCryptorFinal(
                 cryptor,
-                outPtr.baseAddress.advanced(by: bytesOut),
+                outBase.advanced(by: bytesOut),
                 bufSize - bytesOut,
                 &finalOut
             )

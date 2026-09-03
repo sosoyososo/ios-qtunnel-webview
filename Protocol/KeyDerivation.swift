@@ -24,7 +24,7 @@ enum KeyDerivation {
                 buf[16 * i + j] = sum[j]
             }
             // buf[16*(i+1)-1] 保留为 0
-            md5 = MD5()  // 每轮重置；模拟 Go `h := md5.New()` 每次循环重建
+            // ⚠️ 不重置 md5，模拟 Go `h.Write` 累积（i=0 时 sum=MD5(secret), i=1 时 sum=MD5(secret||secret)）
         }
         return buf
     }
