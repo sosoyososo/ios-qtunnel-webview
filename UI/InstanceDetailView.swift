@@ -27,7 +27,7 @@ struct InstanceDetailView: View {
                     Spacer()
                 }
                 LabeledRow("Local", value: instance.localPort > 0 ? "127.0.0.1:\(instance.localPort)" : "—")
-                LabeledRow("Remote", value: "\(server.host):\(server.port)")
+                LabeledRow("Remote", value: "\(server.host):\(config.qtunnelPort)")
                 if let err = state.lastError {
                     LabeledRow("Error", value: err).foregroundStyle(DS.Color.statusDown)
                 }

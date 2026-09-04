@@ -23,7 +23,7 @@ struct ClientConfigListView: View {
             } else {
                 ForEach(configs) { cfg in
                     NavigationLink(value: NavTarget.config(cfg.id)) {
-                        ClientConfigRow(config: cfg)
+                        ClientConfigRow(config: cfg, server: server)
                     }
                     .swipeActions {
                         Button(role: .destructive) {
@@ -53,6 +53,7 @@ struct ClientConfigListView: View {
 
 private struct ClientConfigRow: View {
     let config: ClientConfig
+    let server: Server
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Spacing.xs) {
@@ -60,7 +61,7 @@ private struct ClientConfigRow: View {
             HStack(spacing: DS.Spacing.s) {
                 Text(config.cryptoMethod.cliValue).font(DS.Font.caption1).foregroundStyle(DS.Color.accent)
                 Text("•").foregroundStyle(DS.Color.labelSecondary)
-                Text("\(config.backendHost):\(config.backendPort)")
+                Text("\(server.host):\(config.qtunnelPort) → :\(config.backendPort)")
                     .font(DS.Font.caption1).foregroundStyle(DS.Color.labelSecondary)
             }
         }

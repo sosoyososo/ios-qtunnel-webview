@@ -79,7 +79,7 @@ private struct ServerRow: View {
                 .frame(width: 10, height: 10)
             VStack(alignment: .leading, spacing: DS.Spacing.xs) {
                 Text(server.name).font(DS.Font.headline)
-                Text("\(server.host):\(server.port)").font(DS.Font.caption1).foregroundStyle(DS.Color.labelSecondary)
+                Text(server.host).font(DS.Font.caption1).foregroundStyle(DS.Color.labelSecondary)
             }
             Spacer()
         }

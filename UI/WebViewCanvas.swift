@@ -114,12 +114,14 @@ struct WebViewCanvas: View {
     }
 }
 
-/// 单 webview pane：title bar + WKWebView
+/// 单 webview pane：navigation bar (back/home/close) + WKWebView
 private struct WebViewPane: View {
     @Environment(AppEnvironment.self) private var env
     let webView: WebViewState
     let instance: ClientInstance
     let config: ClientConfig
+
+    @StateObject private var coordinator = WebViewCoordinator()
 
     private var homeURL: URL? {
         guard instance.localPort > 0 else { return nil }
@@ -128,26 +130,9 @@ private struct WebViewPane: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text("\(config.name)[\(webView.indexInConfig)]")
-                    .font(DS.Font.headline)
-                Spacer()
-                Button {
-                    raiseZ()
-                } label: { Image(systemName: "arrow.up") }
-                Button {
-                    lowerZ()
-                } label: { Image(systemName: "arrow.down") }
-                Button(role: .destructive) {
-                    env.store.deleteWebView(webView.id)
-                } label: { Image(systemName: "xmark") }
-            }
-            .padding(.horizontal, DS.Spacing.m)
-            .padding(.vertical, DS.Spacing.s)
-            .background(DS.Color.bgSecondary)
-
+            navBar
             if let url = homeURL {
-                TunneledWebView(url: url)
+                TunneledWebView(url: url, coordinator: coordinator)
             } else {
                 ContentUnavailableView(
                     "Tunnel Not Running",
@@ -156,33 +141,123 @@ private struct WebViewPane: View {
                 )
             }
         }
+        .onChange(of: instance.localPort) { _, _ in
+            // tunnel 启动后把 webview 重定向到 home
+            coordinator.load(homeURL)
+        }
     }
 
-    private func raiseZ() {
-        var wv = webView
-        wv.isFocused = true
-        env.store.upsertWebView(wv)
+    private var navBar: some View {
+        HStack(spacing: DS.Spacing.m) {
+            Text("\(config.name)[\(webView.indexInConfig)]")
+                .font(DS.Font.headline)
+                .lineLimit(1)
+            Spacer()
+            Button {
+                coordinator.goBack()
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+            .disabled(!coordinator.canGoBack)
+
+            Button {
+                coordinator.load(homeURL)
+            } label: {
+                Image(systemName: "house.fill")
+            }
+            .disabled(homeURL == nil)
+
+            Button {
+                coordinator.goForward()
+            } label: {
+                Image(systemName: "chevron.right")
+            }
+            .disabled(!coordinator.canGoForward)
+
+            Button(role: .destructive) {
+                env.store.deleteWebView(webView.id)
+            } label: {
+                Image(systemName: "xmark")
+            }
+        }
+        .padding(.horizontal, DS.Spacing.m)
+        .padding(.vertical, DS.Spacing.s)
+        .background(DS.Color.bgSecondary)
+    }
+}
+
+/// 把 WKWebView 的 canGoBack/canGoForward 状态暴露给 SwiftUI
+@MainActor
+final class WebViewCoordinator: NSObject, ObservableObject {
+    @Published var canGoBack = false
+    @Published var canGoForward = false
+
+    weak var webView: WKWebView?
+
+    func goBack() { webView?.goBack() }
+    func goForward() { webView?.goForward() }
+    func load(_ url: URL?) {
+        guard let url else { return }
+        webView?.load(URLRequest(url: url))
     }
 
-    private func lowerZ() {
-        var wv = webView
-        wv.isFocused = false
-        env.store.upsertWebView(wv)
+    fileprivate func attach(_ webView: WKWebView) {
+        self.webView = webView
+        webView.addObserver(self, forKeyPath: "canGoBack", options: .new, context: nil)
+        webView.addObserver(self, forKeyPath: "canGoForward", options: .new, context: nil)
+        canGoBack = webView.canGoBack
+        canGoForward = webView.canGoForward
+    }
+
+    fileprivate func detach() {
+        guard let wv = webView else { return }
+        wv.removeObserver(self, forKeyPath: "canGoBack")
+        wv.removeObserver(self, forKeyPath: "canGoForward")
+        webView = nil
+    }
+
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        guard let wv = webView else { return }
+        if keyPath == "canGoBack" { canGoBack = wv.canGoBack }
+        if keyPath == "canGoForward" { canGoForward = wv.canGoForward }
+    }
+
+    deinit {
+        if let wv = webView {
+            wv.removeObserver(self, forKeyPath: "canGoBack")
+            wv.removeObserver(self, forKeyPath: "canGoForward")
+        }
     }
 }
 
 /// WKWebView 包装
 private struct TunneledWebView: UIViewRepresentable {
     let url: URL
+    @ObservedObject var coordinator: WebViewCoordinator
 
     func makeUIView(context: Context) -> WKWebView {
-        WKWebView()
+        let cfg = WKWebViewConfiguration()
+        cfg.defaultWebpagePreferences.allowsContentJavaScript = true
+        let webView = WKWebView(frame: .zero, configuration: cfg)
+        webView.allowsBackForwardNavigationGestures = true
+        webView.load(URLRequest(url: url))
+        coordinator.attach(webView)
+        return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        let req = URLRequest(url: url)
-        if webView.url != url {
-            webView.load(req)
+        // 仅在 url 变化时重新加载
+        if webView.url == nil {
+            webView.load(URLRequest(url: url))
         }
+    }
+
+    static func dismantleUIView(_ webView: WKWebView, coordinator: ()) {
+        // 实际清理由 Coordinator.detach 负责
     }
 }

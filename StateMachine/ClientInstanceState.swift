@@ -57,7 +57,7 @@ final class ClientInstanceState {
         actualLocalPort = port  // 记录实际监听端口
 
         // 3. tunnel
-        let tunnel = TunnelConnection(host: server.host, port: server.port, cipher: cipher)
+        let tunnel = TunnelConnection(host: server.host, port: clientConfig.qtunnelPort, cipher: cipher)
         self.tunnel = tunnel
 
         // 等待 tunnel ready（用 continuation + ResumeGuard 防止 double-resume）
@@ -115,7 +115,7 @@ final class ClientInstanceState {
         }
 
         // 连接 tunnel
-        let tunnel = TunnelConnection(host: server.host, port: server.port, cipher: cipher)
+        let tunnel = TunnelConnection(host: server.host, port: clientConfig.qtunnelPort, cipher: cipher)
         let resumeG = ResumeGuard<Bool>()
         let ready = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
             resumeG.setContinuation(cont)

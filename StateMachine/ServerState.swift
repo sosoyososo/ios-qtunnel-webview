@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// Server 在线状态 — spec 01 §3.1
-/// 持有 StatusProbe，向 UI 暴露当前状态
+/// 持有 StatusProbe（DNS-based），向 UI 暴露当前状态
 @Observable
 @MainActor
 final class ServerState {
@@ -24,7 +24,7 @@ final class ServerState {
     /// 启动周期 probe
     func startProbing() {
         stopProbing()
-        let probe = StatusProbe(host: server.host, port: server.port)
+        let probe = StatusProbe(host: server.host)
         self.probe = probe
         Task { [weak self] in
             await probe.start { [weak self] s in
@@ -45,7 +45,7 @@ final class ServerState {
 
     /// 单次 probe（手动刷新）
     func probeNow() async {
-        let s = await StatusProbe.probeOnce(host: server.host, port: server.port, timeout: .seconds(1))
+        let s = await StatusProbe.probeOnce(host: server.host)
         applyStatus(s == .up ? .up : .down)
     }
 
