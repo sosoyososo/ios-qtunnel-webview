@@ -15,11 +15,12 @@ final class ClientInstanceState {
 
     private var tunnel: TunnelConnection?
     private var listener: LocalListener?
+    private(set) var actualLocalPort: Int = 0   // 由 listener.bind 提供（与 instance.localPort 区分）
     private var activeForwarders: [ObjectIdentifier: TCPForwarder] = [:]
     private var heartbeat: Heartbeat?
     private var tunnelReadyContinuation: CheckedContinuation<Void, Never>?
 
-    var localPort: Int { instance.localPort }
+    var localPort: Int { actualLocalPort > 0 ? actualLocalPort : instance.localPort }
 
     init(instance: ClientInstance) {
         self.instance = instance
@@ -53,33 +54,30 @@ final class ClientInstanceState {
             return
         }
         self.listener = listener
-        // 注意：localPort 持久化在 P7 UI 层处理（这里仅修改内存中的 instance）
+        actualLocalPort = port  // 记录实际监听端口
 
         // 3. tunnel
         let tunnel = TunnelConnection(host: server.host, port: server.port, cipher: cipher)
         self.tunnel = tunnel
 
-        // 等待 tunnel ready（用 continuation）
+        // 等待 tunnel ready（用 continuation + ResumeGuard 防止 double-resume）
+        let startGuard = ResumeGuard<Void>()
         await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            self.tunnelReadyContinuation = cont
+            startGuard.setContinuation(cont)
             tunnel.onState = { [weak self] state in
                 guard let self else { return }
                 Task { @MainActor in
                     switch state {
                     case .ready:
                         self.status = .running
-                        // 启 heartbeat
                         let hb = Heartbeat(connection: tunnel)
                         Task { await hb.start() }
                         self.heartbeat = hb
-                        // resume 启动 continuation
-                        self.tunnelReadyContinuation?.resume()
-                        self.tunnelReadyContinuation = nil
+                        startGuard.resume(returning: ())
                     case .failed(let err):
                         self.lastError = "tunnel failed: \(err)"
                         self.status = .failed
-                        self.tunnelReadyContinuation?.resume()
-                        self.tunnelReadyContinuation = nil
+                        startGuard.resume(returning: ())
                     case .closed:
                         if self.status == .running {
                             self.status = .stopped
@@ -90,6 +88,11 @@ final class ClientInstanceState {
                 }
             }
             tunnel.connect()
+            // 启动超时 fallback
+            Task {
+                try? await Task.sleep(for: .seconds(10))
+                startGuard.resume(returning: ())
+            }
         }
 
         // localPort 在 P7 持久化
@@ -113,11 +116,13 @@ final class ClientInstanceState {
 
         // 连接 tunnel
         let tunnel = TunnelConnection(host: server.host, port: server.port, cipher: cipher)
+        let resumeG = ResumeGuard<Bool>()
         let ready = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
+            resumeG.setContinuation(cont)
             tunnel.onState = { state in
                 switch state {
-                case .ready: cont.resume(returning: true)
-                case .failed: cont.resume(returning: false)
+                case .ready: resumeG.resume(returning: true)
+                case .failed: resumeG.resume(returning: false)
                 default: break
                 }
             }
@@ -125,7 +130,7 @@ final class ClientInstanceState {
             // 5s timeout
             Task {
                 try? await Task.sleep(for: .seconds(5))
-                cont.resume(returning: false)
+                resumeG.resume(returning: false)
             }
         }
         // 关闭

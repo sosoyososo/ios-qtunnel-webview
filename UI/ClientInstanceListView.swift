@@ -11,57 +11,65 @@ struct ClientInstanceListView: View {
     }
 
     var body: some View {
-        List {
+        Group {
             if instances.isEmpty {
-                // 自动创建第一个 instance（决策：每 config 默认 1）
-                Color.clear.frame(height: 0)
-                    .onAppear { _ = env.createInstance(for: config) }
+                emptyState
+            } else {
+                instanceList
             }
-            instancesContent
         }
-        .listStyle(.insetGrouped)
         .navigationTitle(config.name)
-        .navigationDestination(for: UUID.self) { instanceId in
-            if let inst = env.store.data.clientInstances.first(where: { $0.id == instanceId }) {
-                InstanceDetailView(instance: inst, config: config, server: server)
-            }
-        }
+        // navigationDestination 已上移到 ServerListView 统一处理
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    let inst = env.createInstance(for: config)
-                    _ = inst
+                    _ = env.createInstance(for: config)
                 } label: {
                     Image(systemName: "plus")
                 }
             }
         }
-        .onAppear {
-            // 第一次进入时如果没有 instance，自动创建
-            if env.store.data.clientInstances.filter({ $0.clientConfigId == config.id }).isEmpty {
-                _ = env.createInstance(for: config)
-            }
-        }
     }
 
-    @ViewBuilder
-    private var instancesContent: some View {
-        let siblings = env.store.data.clientInstances
-            .filter { $0.clientConfigId == config.id }
-            .sorted { $0.id.uuidString < $1.id.uuidString }
-        ForEach(siblings) { inst in
-            NavigationLink(value: inst.id) {
-                InstanceRow(
-                    instance: inst,
-                    state: env.instanceState(for: inst),
-                    indexNumber: (siblings.firstIndex(of: inst) ?? 0) + 1
-                )
+    private var emptyState: some View {
+        VStack(spacing: DS.Spacing.l) {
+            Image(systemName: "bolt.circle")
+                .font(.system(size: 48))
+                .foregroundStyle(DS.Color.labelSecondary)
+            Text("No instances yet")
+                .font(DS.Font.headline)
+            Text("Tap + to create the first client instance")
+                .font(DS.Font.caption1)
+                .foregroundStyle(DS.Color.labelSecondary)
+            Button {
+                let inst = env.createInstance(for: config)
+                print("[ClientInstanceList] created \(inst.id)")
+            } label: {
+                Label("Add Instance", systemImage: "plus.circle.fill")
             }
-            .swipeActions {
-                Button(role: .destructive) {
-                    env.instanceState(for: inst).stop()
-                    env.store.deleteClientInstance(inst.id)
-                } label: { Label("Delete", systemImage: "trash") }
+            .buttonStyle(.borderedProminent)
+            .tint(DS.Color.accent)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(DS.Color.bgGrouped)
+    }
+
+    private var instanceList: some View {
+        List {
+            ForEach(instances) { inst in
+                NavigationLink(value: NavTarget.instance(inst.id)) {
+                    InstanceRow(
+                        instance: inst,
+                        state: env.instanceState(for: inst),
+                        indexNumber: (instances.firstIndex(of: inst) ?? 0) + 1
+                    )
+                }
+                .swipeActions {
+                    Button(role: .destructive) {
+                        env.instanceState(for: inst).stop()
+                        env.store.deleteClientInstance(inst.id)
+                    } label: { Label("Delete", systemImage: "trash") }
+                }
             }
         }
     }

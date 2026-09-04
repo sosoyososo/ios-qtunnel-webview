@@ -57,9 +57,9 @@ struct InstanceDetailView: View {
                     Button {
                         Task {
                             await state.start(clientConfig: config, server: server)
-                            // 持久化 localPort
+                            // 持久化 localPort 到 store
                             var updated = instance
-                            updated.localPort = state.localPort == 0 ? state.localPort : env.instanceState(for: instance).localPort
+                            updated.localPort = env.instanceState(for: instance).actualLocalPort
                             if updated.localPort > 0 {
                                 env.store.upsertClientInstance(updated)
                             }

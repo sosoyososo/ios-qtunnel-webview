@@ -62,11 +62,12 @@ actor StatusProbe {
     static func probeOnce(host: String, port: Int, timeout: Duration) async -> Status {
         let timeoutSec = Double(timeout.components.seconds)
         let timeoutMs = Int32(timeoutSec * 1000.0)
+        let guard_ = ResumeGuard<Status>()
         return await withCheckedContinuation { continuation in
-            let resumed = ResumeGuard(continuation: continuation)
+            guard_.setContinuation(continuation)
             DispatchQueue.global(qos: .utility).async {
                 let status = tcpConnect(host: host, port: UInt16(port), timeoutMs: timeoutMs)
-                resumed.tryResume(status)
+                guard_.resume(returning: status)
             }
         }
     }
@@ -113,20 +114,4 @@ actor StatusProbe {
     }
 }
 
-/// 防止 continuation 多次 resume
-private final class ResumeGuard: @unchecked Sendable {
-    private var cont: CheckedContinuation<StatusProbe.Status, Never>?
-    private let lock = NSLock()
-
-    init(continuation: CheckedContinuation<StatusProbe.Status, Never>) {
-        self.cont = continuation
-    }
-
-    func tryResume(_ status: StatusProbe.Status) {
-        lock.lock()
-        defer { lock.unlock() }
-        guard let c = cont else { return }
-        cont = nil
-        c.resume(returning: status)
-    }
-}
+/// ResumeGuard 已上移到 Util/ResumeGuard.swift（复用）

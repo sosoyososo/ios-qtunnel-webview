@@ -22,7 +22,7 @@ struct ClientConfigListView: View {
                 .listRowBackground(Color.clear)
             } else {
                 ForEach(configs) { cfg in
-                    NavigationLink(value: cfg.id) {
+                    NavigationLink(value: NavTarget.config(cfg.id)) {
                         ClientConfigRow(config: cfg)
                     }
                     .swipeActions {
@@ -35,11 +35,7 @@ struct ClientConfigListView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle(server.name)
-        .navigationDestination(for: UUID.self) { cfgId in
-            if let cfg = env.store.data.clientConfigs.first(where: { $0.id == cfgId }) {
-                ClientInstanceListView(config: cfg, server: server)
-            }
-        }
+        // navigationDestination 已上移到 ServerListView 统一处理
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

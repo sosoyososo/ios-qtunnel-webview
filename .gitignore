@@ -38,3 +38,8 @@ Icon
 
 # Logs
 *.log
+
+# debug screenshots
+.test_*.png
+*.png
+main/

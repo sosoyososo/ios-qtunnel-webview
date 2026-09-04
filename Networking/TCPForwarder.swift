@@ -1,7 +1,7 @@
 import Foundation
 import Network
 
-/// 桥接本地连接与 tunnel 连接 — spec 01 §5.2
+
 /// 本地 conn 收到的字节 → 加密 → 发到 tunnel
 /// tunnel 收到的字节 → 解密 → 发到本地
 final class TCPForwarder: @unchecked Sendable {
@@ -15,6 +15,7 @@ final class TCPForwarder: @unchecked Sendable {
     }
 
     func start() {
+        local.start(queue: .global())  // 启动本地连接
         startLocalReceiveLoop()
         startTunnelReceiveLoop()
     }

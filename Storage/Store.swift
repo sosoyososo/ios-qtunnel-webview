@@ -30,54 +30,70 @@ final class Store {
     }
 
     // MARK: - Mutations
+    // 全部重新赋值 data（@Observable 不跟踪嵌套 struct 修改）
 
     func upsertServer(_ server: Server) {
-        upsert(&data.servers, server)
+        var d = data
+        upsert(&d.servers, server)
+        data = d
         persist()
     }
 
     func deleteServer(_ id: UUID) {
-        data.servers.removeAll { $0.id == id }
-        // 级联删除
-        let cfgIds = data.clientConfigs.filter { $0.serverId == id }.map(\.id)
-        data.clientConfigs.removeAll { cfgIds.contains($0.id) }
-        let instIds = data.clientInstances.filter { cfgIds.contains($0.clientConfigId) }.map(\.id)
-        data.clientInstances.removeAll { instIds.contains($0.id) }
-        data.webViews.removeAll { instIds.contains($0.clientInstanceId) }
+        var d = data
+        d.servers.removeAll { $0.id == id }
+        let cfgIds = d.clientConfigs.filter { $0.serverId == id }.map(\.id)
+        d.clientConfigs.removeAll { cfgIds.contains($0.id) }
+        let instIds = d.clientInstances.filter { cfgIds.contains($0.clientConfigId) }.map(\.id)
+        d.clientInstances.removeAll { instIds.contains($0.id) }
+        d.webViews.removeAll { instIds.contains($0.clientInstanceId) }
+        data = d
         persist()
     }
 
     func upsertClientConfig(_ cfg: ClientConfig) {
-        upsert(&data.clientConfigs, cfg)
+        var d = data
+        upsert(&d.clientConfigs, cfg)
+        data = d
         persist()
     }
 
     func deleteClientConfig(_ id: UUID) {
-        data.clientConfigs.removeAll { $0.id == id }
-        let instIds = data.clientInstances.filter { $0.clientConfigId == id }.map(\.id)
-        data.clientInstances.removeAll { instIds.contains($0.id) }
-        data.webViews.removeAll { instIds.contains($0.clientInstanceId) }
+        var d = data
+        d.clientConfigs.removeAll { $0.id == id }
+        let instIds = d.clientInstances.filter { $0.clientConfigId == id }.map(\.id)
+        d.clientInstances.removeAll { instIds.contains($0.id) }
+        d.webViews.removeAll { instIds.contains($0.clientInstanceId) }
+        data = d
         persist()
     }
 
     func upsertClientInstance(_ inst: ClientInstance) {
-        upsert(&data.clientInstances, inst)
+        var d = data
+        upsert(&d.clientInstances, inst)
+        data = d
         persist()
     }
 
     func deleteClientInstance(_ id: UUID) {
-        data.clientInstances.removeAll { $0.id == id }
-        data.webViews.removeAll { $0.clientInstanceId == id }
+        var d = data
+        d.clientInstances.removeAll { $0.id == id }
+        d.webViews.removeAll { $0.clientInstanceId == id }
+        data = d
         persist()
     }
 
     func upsertWebView(_ wv: WebViewState) {
-        upsert(&data.webViews, wv)
+        var d = data
+        upsert(&d.webViews, wv)
+        data = d
         persist()
     }
 
     func deleteWebView(_ id: UUID) {
-        data.webViews.removeAll { $0.id == id }
+        var d = data
+        d.webViews.removeAll { $0.id == id }
+        data = d
         persist()
     }
 

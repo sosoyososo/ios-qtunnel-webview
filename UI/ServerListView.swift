@@ -3,10 +3,11 @@ import SwiftUI
 /// P1 — Server 列表
 struct ServerListView: View {
     @Environment(AppEnvironment.self) private var env
+    @State private var path = NavigationPath()
     @State private var showingAdd = false
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 if env.store.data.servers.isEmpty {
                     ContentUnavailableView(
@@ -17,7 +18,7 @@ struct ServerListView: View {
                     .listRowBackground(Color.clear)
                 } else {
                     ForEach(env.store.data.servers) { server in
-                        NavigationLink(value: server.id) {
+                        NavigationLink(value: NavTarget.server(server.id)) {
                             ServerRow(server: server, state: env.serverState(for: server.id))
                         }
                         .swipeActions {
@@ -31,9 +32,24 @@ struct ServerListView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Servers")
-            .navigationDestination(for: UUID.self) { serverId in
-                if let server = env.store.data.servers.first(where: { $0.id == serverId }) {
-                    ClientConfigListView(server: server)
+            // 单点 navigationDestination —— 统一处理所有导航
+            .navigationDestination(for: NavTarget.self) { target in
+                switch target {
+                case .server(let id):
+                    if let server = env.store.data.servers.first(where: { $0.id == id }) {
+                        ClientConfigListView(server: server)
+                    }
+                case .config(let id):
+                    if let cfg = env.store.data.clientConfigs.first(where: { $0.id == id }),
+                       let server = env.store.data.servers.first(where: { $0.id == cfg.serverId }) {
+                        ClientInstanceListView(config: cfg, server: server)
+                    }
+                case .instance(let id):
+                    if let inst = env.store.data.clientInstances.first(where: { $0.id == id }),
+                       let cfg = env.store.data.clientConfigs.first(where: { $0.id == inst.clientConfigId }),
+                       let server = env.store.data.servers.first(where: { $0.id == cfg.serverId }) {
+                        InstanceDetailView(instance: inst, config: cfg, server: server)
+                    }
                 }
             }
             .toolbar {

@@ -15,6 +15,7 @@ struct ClientConfigEditView: View {
     @State private var backendPortText: String
     @State private var showingCmd = false
     @State private var showingRegenerateConfirm = false
+    @State private var isSaving = false
 
     init(server: Server, config: ClientConfig?) {
         self.server = server
@@ -72,8 +73,13 @@ struct ClientConfigEditView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { saveConfig() }
-                        .disabled(!isValid)
+                    Button("Save") {
+                        guard !isSaving else { return }
+                        isSaving = true
+                        saveConfig()
+                        dismiss()
+                    }
+                        .disabled(!isValid || isSaving)
                 }
             }
             .sheet(isPresented: $showingCmd) {
