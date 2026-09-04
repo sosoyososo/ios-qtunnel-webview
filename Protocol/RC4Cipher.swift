@@ -43,8 +43,11 @@ private final class RC4State {
         for k in 0..<data.count {
             i = (i + 1) & 0xFF
             j = (j + Int(s[i])) & 0xFF
+            // ⚠️ 关键：用 s[i] 和 s[j] 的**值**（不是位置 i/j）算 keystream 索引
+            let si = Int(s[i])
+            let sj = Int(s[j])
             s.swapAt(i, j)
-            let t = s[(i + j) & 0xFF]
+            let t = s[(si + sj) & 0xFF]
             data[k] ^= t
         }
     }
