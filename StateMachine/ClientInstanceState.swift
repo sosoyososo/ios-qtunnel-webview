@@ -18,6 +18,7 @@ final class ClientInstanceState {
     private(set) var actualLocalPort: Int = 0   // 由 listener.bind 提供（与 instance.localPort 区分）
     private var activeForwarders: [ObjectIdentifier: TCPForwarder] = [:]
     private var heartbeat: Heartbeat?
+    private var timeoutTask: Task<Void, Never>?
     private var tunnelReadyContinuation: CheckedContinuation<Void, Never>?
 
     var localPort: Int { actualLocalPort > 0 ? actualLocalPort : instance.localPort }
@@ -29,10 +30,13 @@ final class ClientInstanceState {
 
     /// 启动长连接（Run）
     func start(clientConfig: ClientConfig, server: Server) async {
-        guard status == .idle || status == .stopped else {
+        // 允许从 idle/stopped/failed 启动；仅 running/handshaking 时拒绝重复启动
+        guard status != .running, status != .handshaking else {
             Log.debug("ClientInstanceState", "start ignored, status=\(status)")
             return
         }
+        teardownNetwork()   // 清理上一次失败/停止运行遗留的 listener/tunnel
+        actualLocalPort = 0
         status = .handshaking
         lastError = nil
 
@@ -67,16 +71,20 @@ final class ClientInstanceState {
             tunnel.onState = { [weak self] state in
                 guard let self else { return }
                 Task { @MainActor in
+                    // 只处理本次运行的 tunnel 事件；旧连接残留回调不干扰新运行
+                    guard self.tunnel === tunnel else { return }
                     switch state {
                     case .ready:
                         // 超时已标 failed 后才到的 ready 忽略，避免状态被回卷
                         guard self.status == .handshaking else { return }
+                        self.timeoutTask?.cancel()
                         self.status = .running
                         let hb = Heartbeat(connection: tunnel)
                         Task { await hb.start() }
                         self.heartbeat = hb
                         startGuard.resume(returning: ())
                     case .failed(let err):
+                        self.timeoutTask?.cancel()
                         self.lastError = "tunnel failed: \(err)"
                         self.status = .failed
                         startGuard.resume(returning: ())
@@ -91,12 +99,11 @@ final class ClientInstanceState {
             }
             tunnel.connect()
             // 启动超时 fallback：10s 未 ready → 失败，避免 UI 无限停留在 Handshaking
-            Task {
+            timeoutTask = Task { @MainActor in
                 try? await Task.sleep(for: .seconds(10))
-                if self.status == .handshaking {
-                    self.lastError = "connect timeout: server \(server.host):\(clientConfig.qtunnelPort) unreachable in 10s"
-                    self.status = .failed
-                }
+                guard self.status == .handshaking else { return }
+                self.lastError = "connect timeout: server \(server.host):\(clientConfig.qtunnelPort) unreachable in 10s"
+                self.status = .failed
                 startGuard.resume(returning: ())
             }
         }
@@ -148,6 +155,14 @@ final class ClientInstanceState {
     }
 
     func stop() {
+        teardownNetwork()
+        status = .stopped
+    }
+
+    /// 清理运行期资源（timeout / heartbeat / tunnel / listener / forwarder），不改 status
+    private func teardownNetwork() {
+        timeoutTask?.cancel()
+        timeoutTask = nil
         if let hb = heartbeat {
             heartbeat = nil
             Task { await hb.stop() }
@@ -160,7 +175,6 @@ final class ClientInstanceState {
         }
         for f in activeForwarders.values { f.stop() }
         activeForwarders.removeAll()
-        status = .stopped
     }
 
     // MARK: - Local connection handler
