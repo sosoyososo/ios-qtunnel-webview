@@ -79,6 +79,7 @@ struct InstanceDetailView: View {
                         } label: {
                             Text("WebView #\(wv.indexInConfig)")
                         }
+                        .disabled(state.status != .running)
                     }
                 }
                 Button {

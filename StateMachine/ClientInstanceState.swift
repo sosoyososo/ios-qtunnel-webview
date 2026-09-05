@@ -69,6 +69,8 @@ final class ClientInstanceState {
                 Task { @MainActor in
                     switch state {
                     case .ready:
+                        // 超时已标 failed 后才到的 ready 忽略，避免状态被回卷
+                        guard self.status == .handshaking else { return }
                         self.status = .running
                         let hb = Heartbeat(connection: tunnel)
                         Task { await hb.start() }
@@ -88,9 +90,13 @@ final class ClientInstanceState {
                 }
             }
             tunnel.connect()
-            // 启动超时 fallback
+            // 启动超时 fallback：10s 未 ready → 失败，避免 UI 无限停留在 Handshaking
             Task {
                 try? await Task.sleep(for: .seconds(10))
+                if self.status == .handshaking {
+                    self.lastError = "connect timeout: server \(server.host):\(clientConfig.qtunnelPort) unreachable in 10s"
+                    self.status = .failed
+                }
                 startGuard.resume(returning: ())
             }
         }
