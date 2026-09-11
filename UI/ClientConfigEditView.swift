@@ -62,7 +62,6 @@ struct ClientConfigEditView: View {
                 }
                 Section {
                     Button {
-                        saveConfig()
                         showingCmd = true
                     } label: {
                         Label("Generate Server Cmd", systemImage: "terminal")
