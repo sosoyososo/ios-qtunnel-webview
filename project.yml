@@ -31,10 +31,10 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: Qtunnel
+        CFBundleDisplayName: Porta
         CFBundleShortVersionString: "0.1.0"
         CFBundleVersion: "1"
-        UILaunchScreen: {}
+        UILaunchStoryboardName: LaunchScreen
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft

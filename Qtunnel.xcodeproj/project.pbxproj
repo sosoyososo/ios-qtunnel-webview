@@ -25,6 +25,7 @@
 		64149FE1774E5647656156B3 /* InstanceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92548EF49E1B66C4970ACD7A /* InstanceDetailView.swift */; };
 		6BACFF590456BAF38E950C0D /* RC4CipherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */; };
 		6EAD230841B7F33542055253 /* ClientConfigEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D4B5C32B0D791509AAEC2C /* ClientConfigEditView.swift */; };
+		72D527EE1C15EE11DAF92C1D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 143FAD8A555300C0E644C216 /* LaunchScreen.storyboard */; };
 		77C1142AE33201308764A799 /* QtunnelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FE4918DFADD07F06F6F7E8 /* QtunnelApp.swift */; };
 		7944736A752D2EA446E60023 /* InstanceExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55FA59A1302EB3A9467A3AF /* InstanceExport.swift */; };
 		7D2571FD06A0A90265720E89 /* ClientConfigListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF26D7AE9CC6E344616CCF69 /* ClientConfigListView.swift */; };
@@ -66,6 +67,7 @@
 
 /* Begin PBXFileReference section */
 		0A41A1C9A5C720127DACF794 /* ClientInstanceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientInstanceState.swift; sourceTree = "<group>"; };
+		143FAD8A555300C0E644C216 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		209ED914EBCACF701D3EE792 /* NavTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTarget.swift; sourceTree = "<group>"; };
 		26776D86FAEABFD922BF8ED2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B077E2472AC51E065CCFB97 /* EndToEndTunnelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndToEndTunnelTests.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				6B815D8716CD1F5BEF1641BB /* Info.plist */,
+				143FAD8A555300C0E644C216 /* LaunchScreen.storyboard */,
 				A6FE4918DFADD07F06F6F7E8 /* QtunnelApp.swift */,
 			);
 			path = App;
@@ -338,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6BA2813CD49781BB315128E /* Assets.xcassets in Resources */,
+				72D527EE1C15EE11DAF92C1D /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
