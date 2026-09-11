@@ -77,7 +77,7 @@ struct ServerListView: View {
             .sheet(isPresented: $showingAdd) {
                 ServerEditView()
             }
-            .sheet(isPresented: $showingHelp) {
+            .fullScreenCover(isPresented: $showingHelp) {
                 HelpGuideView(mode: .help)
             }
             .onChange(of: env.pendingShowAddServer) { _, wantsAdd in

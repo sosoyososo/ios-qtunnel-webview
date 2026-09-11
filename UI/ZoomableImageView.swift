@@ -5,11 +5,15 @@ import UIKit
 ///
 /// 默认 fit-to-bounds；pinch 上限 = 4×；双击在 fit 与 2.5× fit 之间切换。
 /// 用 UIScrollView 而非 SwiftUI 手势实现 —— 滚动/缩放边界、惯性、橡皮筋都更稳。
+///
+/// 实现细节：自定义 `CenteringScrollView` 子类，在 `layoutSubviews` 中当
+/// bounds size 变化时回调 recenter —— 解决首次显示时 bounds 还没 layout、
+/// `fit` 算成 0、imageView 被 zoom-to-zero 卡在左上角的问题。
 struct ZoomableImageView: UIViewRepresentable {
     let image: UIImage
 
-    func makeUIView(context: Context) -> UIScrollView {
-        let scrollView = UIScrollView()
+    func makeUIView(context: Context) -> CenteringScrollView {
+        let scrollView = CenteringScrollView()
         scrollView.delegate = context.coordinator
         scrollView.bouncesZoom = true
         scrollView.showsHorizontalScrollIndicator = false
@@ -30,16 +34,22 @@ struct ZoomableImageView: UIViewRepresentable {
         doubleTap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTap)
 
+        scrollView.onBoundsSizeChange = { [weak scrollView] _ in
+            guard let scrollView else { return }
+            context.coordinator.recenter(in: scrollView)
+        }
+
         context.coordinator.imageView = imageView
         return scrollView
     }
 
-    func updateUIView(_ scrollView: UIScrollView, context: Context) {
+    func updateUIView(_ scrollView: CenteringScrollView, context: Context) {
         guard let imageView = context.coordinator.imageView,
               let image = imageView.image else { return }
         imageView.frame = CGRect(origin: .zero, size: image.size)
         scrollView.contentSize = image.size
-        context.coordinator.recenter(in: scrollView)
+        // updateUIView 自身不主动 recenter —— 让 layoutSubviews 的
+        // onBoundsSizeChange 来统一驱动，避免重复计算
     }
 
     func makeCoordinator() -> Coordinator { Coordinator() }
@@ -55,16 +65,15 @@ struct ZoomableImageView: UIViewRepresentable {
         func recenter(in scrollView: UIScrollView) {
             guard let imageView, let image = imageView.image else { return }
             let bounds = scrollView.bounds
+            guard bounds.width > 0, bounds.height > 0 else { return }
             let imageSize = image.size
             let widthScale = bounds.width / imageSize.width
             let heightScale = bounds.height / imageSize.height
             let fit = min(widthScale, heightScale)
-            if scrollView.minimumZoomScale != fit {
-                scrollView.minimumZoomScale = fit
-                scrollView.maximumZoomScale = fit * 4
-                if scrollView.zoomScale < fit {
-                    scrollView.zoomScale = fit
-                }
+            scrollView.minimumZoomScale = fit
+            scrollView.maximumZoomScale = fit * 4
+            if scrollView.zoomScale < fit {
+                scrollView.zoomScale = fit
             }
             let scaled = CGSize(
                 width: imageSize.width * scrollView.zoomScale,
@@ -83,6 +92,25 @@ struct ZoomableImageView: UIViewRepresentable {
                 let target = min(scrollView.maximumZoomScale, scrollView.minimumZoomScale * 2.5)
                 scrollView.setZoomScale(target, animated: true)
             }
+        }
+    }
+}
+
+/// UIScrollView 子类 —— 把 bounds size 变化回调给宿主，
+/// 确保 image 在首次 layout 后立即居中并启用缩放。
+///
+/// 实现要点：`layoutSubviews()` 被调用时 bounds 已经被父视图布局成新值，
+/// 所以"读 bounds → 比 oldSize"会错过首次变化。改为在实例上保存上一次
+/// 报告的 size，下次 layoutSubviews 时与当前 bounds 比较。
+final class CenteringScrollView: UIScrollView {
+    var onBoundsSizeChange: ((CGRect) -> Void)?
+    private var lastReportedSize: CGSize = .zero
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if lastReportedSize != bounds.size, bounds.width > 0 {
+            lastReportedSize = bounds.size
+            onBoundsSizeChange?(bounds)
         }
     }
 }
