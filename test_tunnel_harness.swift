@@ -10,7 +10,7 @@ struct TestMain {
         let port = 29001
         let secret = "testsecret"
 
-        print("=== qtunnel E2E test ===")
+        print("=== tunnel E2E test ===")
         print("Cipher: RC4, Secret: \(secret)")
         print("Target: \(host):\(port)")
 
@@ -76,7 +76,7 @@ struct TestMain {
         print("=== End ===")
 
         if responseStr.contains("200 OK") {
-            print("\nSUCCESS: HTTP 200 through qtunnel tunnel!")
+            print("\nSUCCESS: HTTP 200 through tunnel tunnel!")
         } else if responseStr.contains("404") {
             print("\nPARTIAL: Connected through tunnel, got 404 (backend running but path not found)")
         } else {

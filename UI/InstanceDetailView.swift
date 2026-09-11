@@ -41,7 +41,7 @@ struct InstanceDetailView: View {
                     }
                     .foregroundStyle(DS.Color.accent)
                 }
-                LabeledRow("Remote", value: "\(server.host):\(config.qtunnelPort)")
+                LabeledRow("Remote", value: "\(server.host):\(config.tunnelPort) → :\(config.backendPort)")
                 if let err = state.lastError {
                     LabeledRow("Error", value: err).foregroundStyle(DS.Color.statusDown)
                 }
@@ -128,7 +128,22 @@ struct InstanceDetailView: View {
                 .foregroundStyle(DS.Color.accent)
             }
         }
-        .navigationTitle("instance")
+        .navigationTitle(instanceName)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 0) {
+                    Text(instanceName)
+                        .font(DS.Font.headline)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text("Instance Detail")
+                        .font(DS.Font.caption2)
+                        .foregroundStyle(DS.Color.labelSecondary)
+                        .lineLimit(1)
+                }
+            }
+        }
         .alert("Export contains plaintext password", isPresented: $showingExportConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Copy Anyway") {
@@ -176,6 +191,15 @@ struct InstanceDetailView: View {
         instance.localPort > 0 ? "127.0.0.1:\(instance.localPort)" : ""
     }
 
+    /// 显示用名：与 InstanceRow 命名规则一致（按在所属 config 的顺序编号）
+    private var instanceName: String {
+        let siblings = env.store.data.clientInstances.filter { $0.clientConfigId == instance.clientConfigId }
+        if let idx = siblings.firstIndex(where: { $0.id == instance.id }) {
+            return "instance #\(idx + 1)"
+        }
+        return "instance"
+    }
+
     private func copyLocalAddress() {
         guard !localAddress.isEmpty else { return }
         UIPasteboard.general.string = localAddress
@@ -190,7 +214,7 @@ struct InstanceDetailView: View {
     /// 生成与 ClientConfigEditView 一致的服务端启动命令并拷贝到剪贴板
     private func copyServerCmd() {
         let cmd = ServerCmd.build(
-            listenPort: config.qtunnelPort,
+            listenPort: config.tunnelPort,
             backendHost: "127.0.0.1",
             backendPort: config.backendPort,
             crypto: config.cryptoMethod.cliValue,

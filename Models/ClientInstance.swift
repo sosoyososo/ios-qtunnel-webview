@@ -1,6 +1,6 @@
 import Foundation
 
-/// ClientInstance — 一条长连接 TCP（iOS 端 qtunnel-client 实例）
+/// ClientInstance — 一条长连接 TCP（iOS 端 tunnel-client 实例）
 /// 默认每 ClientConfig 1 个；多开用于规避 head-of-line blocking
 struct ClientInstance: Identifiable, Codable, Hashable, Sendable {
     let id: UUID

@@ -6,10 +6,10 @@ import Darwin
 import Glibc
 #endif
 
-/// End-to-end tunnel test — runs against a live qtunnel-server + mock backend
+/// End-to-end tunnel test — runs against a live tunnel-server + mock backend
 /// Setup (manual):
 ///   1. mock backend:  python3 /tmp/mock_backend.py 28080
-///   2. qtunnel-server:  /tmp/qtunnel-server -listen=:29001 -backend=127.0.0.1:28080 -crypto=rc4 -secret=testsecret
+///   2. tunnel-server:  /tmp/tunnel-server -listen=:29001 -backend=127.0.0.1:28080 -crypto=rc4 -secret=testsecret
 /// Tests skip if those aren't running.
 final class EndToEndTunnelTests: XCTestCase {
 
@@ -20,19 +20,19 @@ final class EndToEndTunnelTests: XCTestCase {
     func test_httpsRequestThroughTunnel() async throws {
         let available = await isLiveTunnelAvailable()
         if !available {
-            throw XCTSkip("qtunnel-server + mock backend not running on 127.0.0.1:\(port)")
+            throw XCTSkip("tunnel-server + mock backend not running on 127.0.0.1:\(port)")
         }
 
         let plainRequest = Data("GET / HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n".utf8)
         let response = try await sendAndReceive(plain: plainRequest, timeoutMs: 5000)
 
         let responseStr = String(decoding: response, as: UTF8.self)
-        // Backend serves /Users/karsa/proj/qtunnel (via fileServer tool).
-        // Asserting generic HTTP 200 + presence of qtunnel directory entry.
+        // Backend serves the project root (via fileServer tool).
+        // Asserting generic HTTP 200 + presence of tunnel directory entry.
         XCTAssertTrue(responseStr.contains("200 OK"),
                       "Response should be HTTP 200, got first 200 chars: \(responseStr.prefix(200))")
-        XCTAssertTrue(responseStr.contains("qtunnel-ios-web") || responseStr.contains("qtunnel-server"),
-                      "Response should list qtunnel directory contents")
+        XCTAssertTrue(responseStr.contains("tunnel-ios-web") || responseStr.contains("tunnel-server"),
+                      "Response should list tunnel directory contents")
     }
 
     // MARK: - Live check

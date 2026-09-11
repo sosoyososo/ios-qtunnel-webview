@@ -1,7 +1,7 @@
 import Foundation
 
-/// VPS 上的 qtunnel-server 条目 — 仅指定 host，不带端口
-/// qtunnel-server 实际监听端口由 ClientConfig.qtunnelPort 持有
+/// VPS 上的 tunnel-server 条目 — 仅指定 host，不带端口
+/// tunnel-server 实际监听端口由 ClientConfig.tunnelPort 持有
 struct Server: Identifiable, Codable, Hashable, Sendable {
     let id: UUID
     var name: String

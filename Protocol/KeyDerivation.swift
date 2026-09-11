@@ -4,8 +4,8 @@ import CryptoKit
 // 桥接 CommonCrypto 的 MD5（Swift CryptoKit 没有 MD5）
 import CommonCrypto
 
-/// Key 派生 — 复现 qtunnel-server `cipher.go::secretToKey`
-/// ⚠️ 含 off-by-one（末字节 0x00），详见 qtunnel-server/doc/PROTOCOL.md
+/// Key 派生 — 复现 tunnel-server `cipher.go::secretToKey`
+/// ⚠️ 含 off-by-one（末字节 0x00），详见 tunnel-server/doc/PROTOCOL.md
 /// 这是协议契约的一部分，**不能修复**
 enum KeyDerivation {
 

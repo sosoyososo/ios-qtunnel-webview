@@ -2,7 +2,7 @@ import Foundation
 import CommonCrypto
 
 /// AES-256-CFB 流密码 — CommonCrypto 包装
-/// 关键：IV = key[:16]（与 qtunnel-server 一致）
+/// 关键：IV = key[:16]（与 tunnel-server 一致）
 /// encrypt / decrypt 各自独立 cryptor（与 Go 一致）
 final class AES256CFBCipher: Cipher, @unchecked Sendable {
 

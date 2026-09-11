@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Design tokens — 完全对齐 `qtunnel/design-system/tokens/*.md`
+/// Design tokens — 完全对齐 `tunnel/design-system/tokens/*.md`
 /// 详见 spec 01-architecture §9 与 design-system/MASTER.md
 enum DS {
 

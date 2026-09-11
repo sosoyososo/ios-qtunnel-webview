@@ -1,6 +1,6 @@
 import Foundation
 
-/// 拼接 qtunnel-server 启动命令
+/// 拼接 tunnel-server 启动命令
 /// 决策：跨平台可粘贴运行（POSIX 风格 backslash 续行）
 enum ServerCmd {
 

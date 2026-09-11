@@ -9,7 +9,7 @@ final class StoreTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        suiteName = "qtunnel.test.\(UUID().uuidString)"
+        suiteName = "tunnel.test.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)
     }
 

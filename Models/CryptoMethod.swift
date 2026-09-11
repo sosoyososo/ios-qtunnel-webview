@@ -1,11 +1,11 @@
 import Foundation
 
-/// qtunnel 加密方法 — 决策 1/2
+/// tunnel 加密方法 — 决策 1/2
 enum CryptoMethod: String, Codable, CaseIterable, Sendable {
     case rc4
     case aes256cfb
 
-    /// qtunnel-server `-crypto` 参数
+    /// tunnel-server `-crypto` 参数
     var cliValue: String {
         switch self {
         case .rc4: return "rc4"

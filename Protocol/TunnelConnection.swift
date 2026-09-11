@@ -1,7 +1,7 @@
 import Foundation
 import Network
 
-/// 单条 iOS↔qtunnel-server TCP 连接 — spec 01 §4.2
+/// 单条 iOS↔tunnel-server TCP 连接 — spec 01 §4.2
 /// 所有字节流经 cipher 加密/解密
 final class TunnelConnection: @unchecked Sendable {
 

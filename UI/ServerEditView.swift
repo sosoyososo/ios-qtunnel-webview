@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// P2 — 新增 / 编辑 Server
-/// Server 只承载 name + host；qtunnel 端口由 ClientConfig 持有
+/// Server 只承载 name + host；tunnel 端口由 ClientConfig 持有
 struct ServerEditView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.dismiss) private var dismiss

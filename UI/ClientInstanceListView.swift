@@ -19,6 +19,21 @@ struct ClientInstanceListView: View {
             }
         }
         .navigationTitle(config.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 0) {
+                    Text(config.name)
+                        .font(DS.Font.headline)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text("InstanceList")
+                        .font(DS.Font.caption2)
+                        .foregroundStyle(DS.Color.labelSecondary)
+                        .lineLimit(1)
+                }
+            }
+        }
         // navigationDestination 已上移到 ServerListView 统一处理
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

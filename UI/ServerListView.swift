@@ -139,9 +139,9 @@ struct ServerListView: View {
             server = new
         }
 
-        // 2) Config dedup：同 server 下同 qtunnelPort 视为同一配置
+        // 2) Config dedup：同 server 下同 tunnelPort 视为同一配置
         if let existing = env.store.data.clientConfigs.first(where: {
-            $0.serverId == server.id && $0.qtunnelPort == parsed.serverPort
+            $0.serverId == server.id && $0.tunnelPort == parsed.serverPort
         }) {
             importAlert = .duplicate(configId: existing.id, configName: existing.name)
             return
@@ -151,7 +151,7 @@ struct ServerListView: View {
         let cfg = ClientConfig(
             name: parsed.configName,
             serverId: server.id,
-            qtunnelPort: parsed.serverPort,
+            tunnelPort: parsed.serverPort,
             cryptoMethod: parsed.cryptoMethod,
             secret: parsed.password,
             backendPort: parsed.backendPort
@@ -171,7 +171,7 @@ struct ServerListView: View {
                 ContentUnavailableView(
                     "No Servers",
                     systemImage: "server.rack",
-                    description: Text("Tap + to add your first qtunnel-server")
+                    description: Text("Tap + to add your first tunnel-server")
                 )
                 .listRowBackground(Color.clear)
 
@@ -288,9 +288,9 @@ private struct HomeInstanceRow: View {
     /// 有 local 端口才显示 local :<port>，否则直接显示 remote
     private var portText: String {
         if localPort > 0 {
-            return "local :\(localPort) → \(server.host):\(config.qtunnelPort)"
+            return "local :\(localPort) → \(server.host):\(config.tunnelPort)"
         } else {
-            return "\(server.host):\(config.qtunnelPort)"
+            return "\(server.host):\(config.tunnelPort)"
         }
     }
 }

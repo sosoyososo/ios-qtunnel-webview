@@ -3,7 +3,7 @@ import XCTest
 
 /// Key 派生测试 — 复现 Go 服务端 cipher.go
 /// ⚠️ 末字节 0x00（off-by-one）是协议契约，不能修复
-/// 详见 qtunnel-server/doc/PROTOCOL.md
+/// 详见 tunnel-server/doc/PROTOCOL.md
 final class KeyDerivationTests: XCTestCase {
 
     func test_RC4_keyMatchesGoServer() {

@@ -35,6 +35,21 @@ struct ClientConfigListView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle(server.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 0) {
+                    Text(server.name)
+                        .font(DS.Font.headline)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text("ConfigList")
+                        .font(DS.Font.caption2)
+                        .foregroundStyle(DS.Color.labelSecondary)
+                        .lineLimit(1)
+                }
+            }
+        }
         // navigationDestination 已上移到 ServerListView 统一处理
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -61,7 +76,7 @@ private struct ClientConfigRow: View {
             HStack(spacing: DS.Spacing.s) {
                 Text(config.cryptoMethod.cliValue).font(DS.Font.caption1).foregroundStyle(DS.Color.accent)
                 Text("•").foregroundStyle(DS.Color.labelSecondary)
-                Text("\(server.host):\(config.qtunnelPort) → :\(config.backendPort)")
+                Text("\(server.host):\(config.tunnelPort) → :\(config.backendPort)")
                     .font(DS.Font.caption1).foregroundStyle(DS.Color.labelSecondary)
             }
         }

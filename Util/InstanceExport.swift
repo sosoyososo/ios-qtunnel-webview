@@ -6,7 +6,7 @@ import Foundation
 /// ```
 /// {
 ///   "schema_version": 1,
-///   "kind": "qtunnel.instance.export",
+///   "kind": "tunnel.instance.export",
 ///   "exported_at": "<ISO8601>",
 ///   "instance": {
 ///     "server": { "name": "...", "host": "..." },
@@ -23,7 +23,7 @@ enum InstanceExport {
     static let schemaVersion = 2
     /// v1 没有 `config_name`，导入时回填 `<host>:<serverPort>` 作为 Config 名称
     static let schemaVersionV1 = 1
-    static let kind = "qtunnel.instance.export"
+    static let kind = "tunnel.instance.export"
 
     // MARK: - Payload
 
@@ -54,7 +54,7 @@ enum InstanceExport {
     struct Parsed: Hashable, Sendable {
         let configName: String   // → ClientConfig.name（v2 取自 payload，v1 推导为 `<host>:<serverPort>`）
         let serverRef: ServerRef
-        let serverPort: Int      // → ClientConfig.qtunnelPort
+        let serverPort: Int      // → ClientConfig.tunnelPort
         let backendPort: Int     // → ClientConfig.backendPort
         let cryptoMethod: CryptoMethod
         let password: String     // → ClientConfig.secret（明文）
@@ -76,7 +76,7 @@ enum InstanceExport {
             switch self {
             case .emptyInput:               return "Clipboard is empty"
             case .invalidJSON:              return "Invalid JSON"
-            case .wrongKind:                return "Not a qtunnel instance export"
+            case .wrongKind:                return "Not a tunnel instance export"
             case .unsupportedSchemaVersion(let v): return "Unsupported schema version: \(v)"
             case .missingField(let f):      return "Missing field: \(f)"
             case .invalidPort(let f, let v):return "Invalid port in \(f): \(v)"
@@ -97,7 +97,7 @@ enum InstanceExport {
             instance: Instance(
                 config_name: config.name,
                 server: ServerRef(name: server.name, host: server.host),
-                server_port: config.qtunnelPort,
+                server_port: config.tunnelPort,
                 backend_port: config.backendPort,
                 crypto_method: config.cryptoMethod.cliValue,
                 password: config.secret

@@ -1,7 +1,7 @@
 import Foundation
 
 /// 流加密协议 — spec 01 §4.1
-/// encrypt/decrypt 都是 in-place XOR，匹配 qtunnel-server `Cipher.encrypt/decrypt`
+/// encrypt/decrypt 都是 in-place XOR，匹配 tunnel-server `Cipher.encrypt/decrypt`
 protocol Cipher: Sendable {
     func encrypt(_ data: inout [UInt8])
     func decrypt(_ data: inout [UInt8])

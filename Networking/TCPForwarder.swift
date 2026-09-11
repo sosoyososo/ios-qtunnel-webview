@@ -1,7 +1,7 @@
 import Foundation
 import Network
 
-/// 一条本地连接 ⇄ 一条到 qtunnel-server 的加密隧道（与 Go client 语义一致：
+/// 一条本地连接 ⇄ 一条到 tunnel-server 的加密隧道（与 Go client 语义一致：
 /// 每次本地 TCP 连接独享一条隧道 + 独立 cipher，服务端按连接 NewCipher）。
 /// - local 收到的字节 → 加密 → tunnel
 /// - tunnel 解密收到的字节 → local
