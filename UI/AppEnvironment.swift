@@ -10,6 +10,11 @@ final class AppEnvironment {
     var clientInstanceStates: [UUID: ClientInstanceState] = [:]
     var webViewMachines: [UUID: WebViewStateMachine] = [:]
 
+    /// 跨 view 通信的轻量旗标 —— HelpGuideView 末尾"Create first server"
+    /// tap 后置 true，ServerListView 用 onChange 监听并打开自己的 add sheet。
+    /// 用一次性 flag（消费后立刻置回 false）避免重复触发。
+    var pendingShowAddServer: Bool = false
+
     init(store: Store = Store()) {
         self.store = store
         // 初始化所有 server 的状态机并启动周期 probe

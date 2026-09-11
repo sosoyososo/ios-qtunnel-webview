@@ -5,6 +5,7 @@ struct ServerListView: View {
     @Environment(AppEnvironment.self) private var env
     @State private var path = NavigationPath()
     @State private var showingAdd = false
+    @State private var showingHelp = false
     @State private var importAlert: ImportAlert?
 
     enum ImportAlert: Identifiable {
@@ -51,6 +52,14 @@ struct ServerListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        showingHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                    .accessibilityLabel("Help")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
                         attemptImport()
                     } label: {
                         Image(systemName: "square.and.arrow.down")
@@ -67,6 +76,15 @@ struct ServerListView: View {
             }
             .sheet(isPresented: $showingAdd) {
                 ServerEditView()
+            }
+            .sheet(isPresented: $showingHelp) {
+                HelpGuideView(mode: .help)
+            }
+            .onChange(of: env.pendingShowAddServer) { _, wantsAdd in
+                if wantsAdd {
+                    env.pendingShowAddServer = false
+                    showingAdd = true
+                }
             }
             .alert(item: $importAlert) { alert in
                 switch alert {
@@ -149,12 +167,18 @@ struct ServerListView: View {
     @ViewBuilder
     private var serverSection: some View {
         if env.store.data.servers.isEmpty {
-            ContentUnavailableView(
-                "No Servers",
-                systemImage: "server.rack",
-                description: Text("Tap + to add your first qtunnel-server")
-            )
-            .listRowBackground(Color.clear)
+            VStack(spacing: DS.Spacing.l) {
+                ContentUnavailableView(
+                    "No Servers",
+                    systemImage: "server.rack",
+                    description: Text("Tap + to add your first qtunnel-server")
+                )
+                .listRowBackground(Color.clear)
+
+                HelpButton(label: "What is Porta?", action: { showingHelp = true }, prominent: true)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
         } else {
             ForEach(env.store.data.servers) { server in
                 NavigationLink(value: NavTarget.server(server.id)) {

@@ -16,6 +16,7 @@
 		295CC2658D5C77C7F4D8A372 /* ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA25958629EAEBE651EB3BE /* ServerState.swift */; };
 		2F88751D6279228C9A743F86 /* WebViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE2B93AA06DE0C0933C3D38 /* WebViewState.swift */; };
 		2FD47ED596DDAE8B90235A14 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C556C466DC396F7E7CF0A9 /* Server.swift */; };
+		3ABD2FEFA77588AF1AD192FB /* HelpGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA876A76BCAEC807AA07ADC /* HelpGuideView.swift */; };
 		4489E2B229CBC79D6D12D0E0 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF8F0B808071A19757B18E8 /* AppEnvironment.swift */; };
 		492400C0D605BF0DDEB48A96 /* ServerEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52445120295260DE53C68C8C /* ServerEditView.swift */; };
 		4DD160E6908B3EFA2AE8DC1E /* StateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46CE42E287269A4380C2039 /* StateMachineTests.swift */; };
@@ -41,6 +42,7 @@
 		ACD26350031D6818F736FCAB /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA65377F4538BC916FA927DD /* Store.swift */; };
 		B2A47DE3B7D306A9BEA94A88 /* TunnelConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5854FF1B74F921D0AA78AE /* TunnelConnection.swift */; };
 		B448BBD217E626ABD659848F /* Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3BBD2D4CF94CC704688F8A /* Cipher.swift */; };
+		BCCEE1FB57A203A474EA24E3 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79F7F04CF48ABCB2849726F /* ZoomableImageView.swift */; };
 		BE959F2DDDAF1A48C1A12764 /* LocalListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADDA2E01CC6D26E094B9D7D /* LocalListener.swift */; };
 		C16890B4486E0C1E7238FC38 /* RC4Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */; };
 		C2DC1D95C01736D83366FD78 /* WebViewStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6EE499A231884BA157CF92 /* WebViewStateMachine.swift */; };
@@ -97,6 +99,7 @@
 		B9E5D2C172742B92859D2C96 /* StoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTests.swift; sourceTree = "<group>"; };
 		BB1D9703053E694DF9D9B7B0 /* Password.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Password.swift; sourceTree = "<group>"; };
 		BCA25958629EAEBE651EB3BE /* ServerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerState.swift; sourceTree = "<group>"; };
+		BCA876A76BCAEC807AA07ADC /* HelpGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpGuideView.swift; sourceTree = "<group>"; };
 		C2F9BCE18CAE224D4DE2B48E /* AES256CFBCipherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES256CFBCipherTests.swift; sourceTree = "<group>"; };
 		C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RC4CipherTests.swift; sourceTree = "<group>"; };
 		C878BE8AB7C890741D63FD4B /* KeyDerivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivation.swift; sourceTree = "<group>"; };
@@ -105,6 +108,7 @@
 		CA5026AC12426FE9FA03A497 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		CD6EE499A231884BA157CF92 /* WebViewStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewStateMachine.swift; sourceTree = "<group>"; };
 		CE033D1210CD8506DD81F698 /* Qtunnel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qtunnel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D79F7F04CF48ABCB2849726F /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
 		D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RC4Cipher.swift; sourceTree = "<group>"; };
 		DF44707E2712A711681F8A37 /* ServerCmd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCmd.swift; sourceTree = "<group>"; };
 		E55FA59A1302EB3A9467A3AF /* InstanceExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceExport.swift; sourceTree = "<group>"; };
@@ -189,12 +193,14 @@
 				A0D4B5C32B0D791509AAEC2C /* ClientConfigEditView.swift */,
 				FF26D7AE9CC6E344616CCF69 /* ClientConfigListView.swift */,
 				45BE94CA6F6F93ADB56F2656 /* ClientInstanceListView.swift */,
+				BCA876A76BCAEC807AA07ADC /* HelpGuideView.swift */,
 				92548EF49E1B66C4970ACD7A /* InstanceDetailView.swift */,
 				209ED914EBCACF701D3EE792 /* NavTarget.swift */,
 				77F12A3B994F3E9806242219 /* ServerCmdModal.swift */,
 				52445120295260DE53C68C8C /* ServerEditView.swift */,
 				CA5026AC12426FE9FA03A497 /* ServerListView.swift */,
 				334BA1DDD50D97561A9B05F3 /* WebViewCanvas.swift */,
+				D79F7F04CF48ABCB2849726F /* ZoomableImageView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -364,6 +370,7 @@
 				8E62BA42FB244936759FD8E6 /* CryptoMethod.swift in Sources */,
 				96CEE7F769346FE30EABDCDF /* DS.swift in Sources */,
 				ECCC52C76DE924290046F790 /* Heartbeat.swift in Sources */,
+				3ABD2FEFA77588AF1AD192FB /* HelpGuideView.swift in Sources */,
 				64149FE1774E5647656156B3 /* InstanceDetailView.swift in Sources */,
 				7944736A752D2EA446E60023 /* InstanceExport.swift in Sources */,
 				107F0A411CB0EBB6C7814D1A /* KeyDerivation.swift in Sources */,
@@ -388,6 +395,7 @@
 				FC0F28FE0A9CBCB071443C18 /* WebViewCanvas.swift in Sources */,
 				2F88751D6279228C9A743F86 /* WebViewState.swift in Sources */,
 				C2DC1D95C01736D83366FD78 /* WebViewStateMachine.swift in Sources */,
+				BCCEE1FB57A203A474EA24E3 /* ZoomableImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

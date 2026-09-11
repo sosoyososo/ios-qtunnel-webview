@@ -17,6 +17,12 @@ final class Store {
     private(set) var data: Data
     private let defaults: UserDefaults
 
+    /// 用户是否看过 onboarding 引导 — 与 store JSON 解耦，独立持久化
+    var hasSeenOnboarding: Bool {
+        get { defaults.bool(forKey: Keys.hasSeenOnboarding) }
+        set { defaults.set(newValue, forKey: Keys.hasSeenOnboarding) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         if let raw = defaults.data(forKey: Keys.store),
