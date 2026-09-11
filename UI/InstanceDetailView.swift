@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// P6 — 单 instance 详情 + Run/Test/Open WebView
 struct InstanceDetailView: View {
@@ -9,6 +10,10 @@ struct InstanceDetailView: View {
 
     @State private var testResult: TestResultBanner?
     @State private var webViewIds: [UUID] = []  // 当前 instance 的 webviews
+    @State private var copiedLocal = false
+    @State private var copiedServerCmd = false
+    @State private var showingExportConfirm = false
+    @State private var copiedExport = false
 
     enum TestResultBanner: Identifiable {
         case success(Int)
@@ -26,7 +31,16 @@ struct InstanceDetailView: View {
                     Text(statusText(state)).font(DS.Font.body)
                     Spacer()
                 }
-                LabeledRow("Local", value: instance.localPort > 0 ? "127.0.0.1:\(instance.localPort)" : "—")
+                LabeledRow("Local", value: localAddress.isEmpty ? "—" : localAddress)
+                if !localAddress.isEmpty {
+                    Button {
+                        copyLocalAddress()
+                    } label: {
+                        Label(copiedLocal ? "Copied \(localAddress)" : "Copy \(localAddress)",
+                              systemImage: copiedLocal ? "checkmark.circle.fill" : "doc.on.doc")
+                    }
+                    .foregroundStyle(DS.Color.accent)
+                }
                 LabeledRow("Remote", value: "\(server.host):\(config.qtunnelPort)")
                 if let err = state.lastError {
                     LabeledRow("Error", value: err).foregroundStyle(DS.Color.statusDown)
@@ -71,6 +85,17 @@ struct InstanceDetailView: View {
                 }
             }
 
+            Section("Config") {
+                LabeledRow("Crypto", value: config.cryptoMethod.displayName)
+                Button {
+                    copyServerCmd()
+                } label: {
+                    Label(copiedServerCmd ? "Copied Server Cmd" : "Copy Server Cmd",
+                          systemImage: copiedServerCmd ? "checkmark.circle.fill" : "terminal")
+                }
+                .foregroundStyle(DS.Color.accent)
+            }
+
             Section("WebViews") {
                 ForEach(webViewIds, id: \.self) { wvId in
                     if let wv = env.store.data.webViews.first(where: { $0.id == wvId }) {
@@ -92,8 +117,26 @@ struct InstanceDetailView: View {
                 }
                 .disabled(state.status != .running)
             }
+
+            Section("Share") {
+                Button {
+                    showingExportConfirm = true
+                } label: {
+                    Label(copiedExport ? "Exported" : "Export Config",
+                          systemImage: copiedExport ? "checkmark.circle.fill" : "square.and.arrow.up")
+                }
+                .foregroundStyle(DS.Color.accent)
+            }
         }
         .navigationTitle("instance")
+        .alert("Export contains plaintext password", isPresented: $showingExportConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Copy Anyway") {
+                performExport()
+            }
+        } message: {
+            Text("The exported JSON contains the password in plaintext. Do not share it with anyone you don't trust.")
+        }
         .onAppear {
             webViewIds = env.store.data.webViews
                 .filter { $0.clientInstanceId == instance.id }
@@ -125,6 +168,52 @@ struct InstanceDetailView: View {
         case .running: return DS.Color.statusUp
         case .failed: return DS.Color.statusDown
         default: return DS.Color.statusUnknown
+        }
+    }
+
+    /// 本地隧道入口，例如 127.0.0.1:65043
+    private var localAddress: String {
+        instance.localPort > 0 ? "127.0.0.1:\(instance.localPort)" : ""
+    }
+
+    private func copyLocalAddress() {
+        guard !localAddress.isEmpty else { return }
+        UIPasteboard.general.string = localAddress
+        copiedLocal = true
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            copiedLocal = false
+        }
+    }
+
+    /// 生成与 ClientConfigEditView 一致的服务端启动命令并拷贝到剪贴板
+    private func copyServerCmd() {
+        let cmd = ServerCmd.build(
+            listenPort: config.qtunnelPort,
+            backendHost: "127.0.0.1",
+            backendPort: config.backendPort,
+            crypto: config.cryptoMethod.cliValue,
+            secret: config.secret
+        )
+        UIPasteboard.general.string = cmd
+        copiedServerCmd = true
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            copiedServerCmd = false
+        }
+    }
+
+    /// 导出当前 instance 的配置（JSON）到剪贴板
+    private func performExport() {
+        let json = InstanceExport.encode(instance: instance, config: config, server: server)
+        UIPasteboard.general.string = json
+        copiedExport = true
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            copiedExport = false
         }
     }
 }

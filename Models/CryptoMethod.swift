@@ -20,4 +20,12 @@ enum CryptoMethod: String, Codable, CaseIterable, Sendable {
         case .aes256cfb: return 32
         }
     }
+
+    /// 用户可见的展示名
+    var displayName: String {
+        switch self {
+        case .rc4: return "RC4"
+        case .aes256cfb: return "AES-256-CFB"
+        }
+    }
 }

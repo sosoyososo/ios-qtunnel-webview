@@ -26,6 +26,7 @@
 		6BACFF590456BAF38E950C0D /* RC4CipherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F9EF19589AD30195EE991A /* RC4CipherTests.swift */; };
 		6EAD230841B7F33542055253 /* ClientConfigEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D4B5C32B0D791509AAEC2C /* ClientConfigEditView.swift */; };
 		77C1142AE33201308764A799 /* QtunnelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FE4918DFADD07F06F6F7E8 /* QtunnelApp.swift */; };
+		7944736A752D2EA446E60023 /* InstanceExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55FA59A1302EB3A9467A3AF /* InstanceExport.swift */; };
 		7D2571FD06A0A90265720E89 /* ClientConfigListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF26D7AE9CC6E344616CCF69 /* ClientConfigListView.swift */; };
 		8C4AEB99EA263E6126F1B817 /* KeyDerivationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6528DC0E2C49F40310B7E7 /* KeyDerivationTests.swift */; };
 		8C7DB2682B3A2B2CCDE646C4 /* StatusProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88C6C582DCD15AFF9A83D57 /* StatusProbe.swift */; };
@@ -42,6 +43,7 @@
 		BE959F2DDDAF1A48C1A12764 /* LocalListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADDA2E01CC6D26E094B9D7D /* LocalListener.swift */; };
 		C16890B4486E0C1E7238FC38 /* RC4Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */; };
 		C2DC1D95C01736D83366FD78 /* WebViewStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6EE499A231884BA157CF92 /* WebViewStateMachine.swift */; };
+		C6BA2813CD49781BB315128E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26776D86FAEABFD922BF8ED2 /* Assets.xcassets */; };
 		CAC93BAE6761FDE651C21E51 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5026AC12426FE9FA03A497 /* ServerListView.swift */; };
 		DBF148B07CC8962B691824F0 /* ClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE27B9C36621CB52E6B49F6 /* ClientConfig.swift */; };
 		E37CB623C3426242CA5BF47A /* StatusProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8888EA6ACE01989BE0EEABF /* StatusProbeTests.swift */; };
@@ -65,6 +67,7 @@
 /* Begin PBXFileReference section */
 		0A41A1C9A5C720127DACF794 /* ClientInstanceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientInstanceState.swift; sourceTree = "<group>"; };
 		209ED914EBCACF701D3EE792 /* NavTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTarget.swift; sourceTree = "<group>"; };
+		26776D86FAEABFD922BF8ED2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B077E2472AC51E065CCFB97 /* EndToEndTunnelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndToEndTunnelTests.swift; sourceTree = "<group>"; };
 		2F5854FF1B74F921D0AA78AE /* TunnelConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelConnection.swift; sourceTree = "<group>"; };
 		334BA1DDD50D97561A9B05F3 /* WebViewCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewCanvas.swift; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 		CE033D1210CD8506DD81F698 /* Qtunnel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qtunnel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9A41FBD1C7F3D127F6BA043 /* RC4Cipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RC4Cipher.swift; sourceTree = "<group>"; };
 		DF44707E2712A711681F8A37 /* ServerCmd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCmd.swift; sourceTree = "<group>"; };
+		E55FA59A1302EB3A9467A3AF /* InstanceExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceExport.swift; sourceTree = "<group>"; };
 		E8C556C466DC396F7E7CF0A9 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		EEE2B93AA06DE0C0933C3D38 /* WebViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewState.swift; sourceTree = "<group>"; };
 		F3954BD928A1673AC38C8C34 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 		24237277973A46CCAC9D5B8C /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				E55FA59A1302EB3A9467A3AF /* InstanceExport.swift */,
 				4DFBF0EEC11E1B16A4A7A39B /* Log.swift */,
 				BB1D9703053E694DF9D9B7B0 /* Password.swift */,
 				8B3BBD2137159EDCDB4F5D93 /* ResumeGuard.swift */,
@@ -206,6 +211,7 @@
 		C1F08710CE64C69319697A2C = {
 			isa = PBXGroup;
 			children = (
+				26776D86FAEABFD922BF8ED2 /* Assets.xcassets */,
 				2CCDE95A2E545ED0AF13DB32 /* App */,
 				DC8246F80306DA47BC7A08AB /* DesignSystem */,
 				388F7A7CE7A20D86E8D85AC1 /* Models */,
@@ -260,6 +266,7 @@
 			buildConfigurationList = 9C0413D2F61EA09DBC446865 /* Build configuration list for PBXNativeTarget "Qtunnel" */;
 			buildPhases = (
 				9C211B4D297DCA19A1EF40C4 /* Sources */,
+				AF900A722EDDE6DCF1BD5BBD /* Resources */,
 			);
 			buildRules = (
 			);
@@ -300,7 +307,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					7FF0ADB05EC299706951D968 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 8V95JS2XCZ;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -325,6 +332,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		AF900A722EDDE6DCF1BD5BBD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6BA2813CD49781BB315128E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		9C211B4D297DCA19A1EF40C4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -343,6 +361,7 @@
 				96CEE7F769346FE30EABDCDF /* DS.swift in Sources */,
 				ECCC52C76DE924290046F790 /* Heartbeat.swift in Sources */,
 				64149FE1774E5647656156B3 /* InstanceDetailView.swift in Sources */,
+				7944736A752D2EA446E60023 /* InstanceExport.swift in Sources */,
 				107F0A411CB0EBB6C7814D1A /* KeyDerivation.swift in Sources */,
 				57D3ED93979E5A22153D28DF /* Keys.swift in Sources */,
 				BE959F2DDDAF1A48C1A12764 /* LocalListener.swift in Sources */,
@@ -557,7 +576,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 8V95JS2XCZ;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -575,7 +594,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 8V95JS2XCZ;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

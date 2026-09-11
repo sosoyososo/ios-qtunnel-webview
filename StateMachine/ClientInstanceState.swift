@@ -3,8 +3,9 @@ import Observation
 import Network
 
 /// ClientInstance 运行时状态机 — spec 01 §3.3
-/// 持有 TunnelConnection + LocalListener + TCPForwarder + Heartbeat，
-/// 驱动 start/stop 流程；UI 仅观察 status 字段
+/// 实例只负责本地监听端口；每个被接受的本地连接独享一条到 qtunnel-server
+/// 的加密隧道（one local conn ⇄ one tunnel ⇄ one backend conn）。
+/// 单条隧道故障不会让整个实例停止 —— 实例随 listener 生命周期走。
 @Observable
 @MainActor
 final class ClientInstanceState {
@@ -13,13 +14,11 @@ final class ClientInstanceState {
     private(set) var status: ClientInstance.Status = .idle
     private(set) var lastError: String?
 
-    private var tunnel: TunnelConnection?
     private var listener: LocalListener?
+    private var activeConfig: ClientConfig?
+    private var activeServer: Server?
     private(set) var actualLocalPort: Int = 0   // 由 listener.bind 提供（与 instance.localPort 区分）
     private var activeForwarders: [ObjectIdentifier: TCPForwarder] = [:]
-    private var heartbeat: Heartbeat?
-    private var timeoutTask: Task<Void, Never>?
-    private var tunnelReadyContinuation: CheckedContinuation<Void, Never>?
 
     var localPort: Int { actualLocalPort > 0 ? actualLocalPort : instance.localPort }
 
@@ -28,22 +27,20 @@ final class ClientInstanceState {
         self.status = instance.status
     }
 
-    /// 启动长连接（Run）
+    /// 启动本地监听（Run）。不预建隧道 —— 每个新本地连接按需建隧道。
     func start(clientConfig: ClientConfig, server: Server) async {
         // 允许从 idle/stopped/failed 启动；仅 running/handshaking 时拒绝重复启动
         guard status != .running, status != .handshaking else {
             Log.debug("ClientInstanceState", "start ignored, status=\(status)")
             return
         }
-        teardownNetwork()   // 清理上一次失败/停止运行遗留的 listener/tunnel
+        teardownNetwork()   // 清理上一次运行遗留的 listener/forwarders
         actualLocalPort = 0
-        status = .handshaking
         lastError = nil
+        activeConfig = clientConfig
+        activeServer = server
+        status = .handshaking
 
-        // 1. cipher
-        let cipher = CipherFactory.make(method: clientConfig.cryptoMethod, secret: clientConfig.secret)
-
-        // 2. 本地 listener
         let listener = LocalListener()
         let port: Int
         do {
@@ -54,62 +51,15 @@ final class ClientInstanceState {
             }
         } catch {
             lastError = "listen failed: \(error)"
+            activeConfig = nil
+            activeServer = nil
             status = .failed
             return
         }
         self.listener = listener
-        actualLocalPort = port  // 记录实际监听端口
-
-        // 3. tunnel
-        let tunnel = TunnelConnection(host: server.host, port: clientConfig.qtunnelPort, cipher: cipher)
-        self.tunnel = tunnel
-
-        // 等待 tunnel ready（用 continuation + ResumeGuard 防止 double-resume）
-        let startGuard = ResumeGuard<Void>()
-        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            startGuard.setContinuation(cont)
-            tunnel.onState = { [weak self] state in
-                guard let self else { return }
-                Task { @MainActor in
-                    // 只处理本次运行的 tunnel 事件；旧连接残留回调不干扰新运行
-                    guard self.tunnel === tunnel else { return }
-                    switch state {
-                    case .ready:
-                        // 超时已标 failed 后才到的 ready 忽略，避免状态被回卷
-                        guard self.status == .handshaking else { return }
-                        self.timeoutTask?.cancel()
-                        self.status = .running
-                        let hb = Heartbeat(connection: tunnel)
-                        Task { await hb.start() }
-                        self.heartbeat = hb
-                        startGuard.resume(returning: ())
-                    case .failed(let err):
-                        self.timeoutTask?.cancel()
-                        self.lastError = "tunnel failed: \(err)"
-                        self.status = .failed
-                        startGuard.resume(returning: ())
-                    case .closed:
-                        if self.status == .running {
-                            self.status = .stopped
-                        }
-                    default:
-                        break
-                    }
-                }
-            }
-            tunnel.connect()
-            // 启动超时 fallback：10s 未 ready → 失败，避免 UI 无限停留在 Handshaking
-            timeoutTask = Task { @MainActor in
-                try? await Task.sleep(for: .seconds(10))
-                guard self.status == .handshaking else { return }
-                self.lastError = "connect timeout: server \(server.host):\(clientConfig.qtunnelPort) unreachable in 10s"
-                self.status = .failed
-                startGuard.resume(returning: ())
-            }
-        }
-
-        // localPort 在 P7 持久化
-        Log.info("ClientInstanceState", "running on local port \(port)")
+        actualLocalPort = port
+        status = .running
+        Log.info("ClientInstanceState", "listening on 127.0.0.1:\(port)")
     }
 
     /// Test 模式：5s timeout，成功/失败都关闭
@@ -159,33 +109,35 @@ final class ClientInstanceState {
         status = .stopped
     }
 
-    /// 清理运行期资源（timeout / heartbeat / tunnel / listener / forwarder），不改 status
+    /// 清理运行期资源（listener + 各 forwarder），不改 status
     private func teardownNetwork() {
-        timeoutTask?.cancel()
-        timeoutTask = nil
-        if let hb = heartbeat {
-            heartbeat = nil
-            Task { await hb.stop() }
-        }
-        tunnel?.disconnect()
-        tunnel = nil
         if let l = listener {
             listener = nil
             Task { await l.stop() }
         }
         for f in activeForwarders.values { f.stop() }
         activeForwarders.removeAll()
+        activeConfig = nil
+        activeServer = nil
     }
 
     // MARK: - Local connection handler
 
     private func handleLocalConnection(_ conn: NWConnection) {
-        guard let tunnel else {
+        guard let cfg = activeConfig, let server = activeServer else {
             conn.cancel()
             return
         }
-        let forwarder = TCPForwarder(local: conn, tunnel: tunnel)
-        activeForwarders[ObjectIdentifier(conn)] = forwarder
+        // 每条本地连接 = 新 cipher + 新隧道（服务端 transport 也按连接 NewCipher）
+        let cipher = CipherFactory.make(method: cfg.cryptoMethod, secret: cfg.secret)
+        let tunnel = TunnelConnection(host: server.host, port: cfg.qtunnelPort, cipher: cipher)
+        let key = ObjectIdentifier(conn)
+        let forwarder = TCPForwarder(local: conn, tunnel: tunnel) { [weak self] in
+            Task { @MainActor in
+                self?.activeForwarders.removeValue(forKey: key)
+            }
+        }
+        activeForwarders[key] = forwarder
         forwarder.start()
     }
 
