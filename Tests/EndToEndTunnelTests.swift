@@ -37,9 +37,34 @@ final class EndToEndTunnelTests: XCTestCase {
 
     // MARK: - Live check
 
+    /// 直接 TCP connect 判断 tunnel-server 是否在监听指定端口
+    /// (StatusProbe 已改为 DNS + NWPath 语义,不带端口探测能力)
     private func isLiveTunnelAvailable() async -> Bool {
-        let status = await StatusProbe.probeOnce(host: host, port: port, timeout: .seconds(2))
-        return status == .up
+        guard let addrTuple = try? makeAddr() else { return false }
+        let sockAddr = addrTuple.0
+        let fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
+        guard fd >= 0 else { return false }
+        defer { close(fd) }
+
+        let flags = fcntl(fd, F_GETFL, 0)
+        _ = fcntl(fd, F_SETFL, flags | O_NONBLOCK)
+
+        var sockAddrVar = sockAddr
+        let rc = withUnsafePointer(to: &sockAddrVar) { ptr -> Int32 in
+            ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sa in
+                connect(fd, sa, socklen_t(MemoryLayout<sockaddr_in>.size))
+            }
+        }
+        if rc == 0 { return true }
+        guard errno == EINPROGRESS else { return false }
+
+        var pfd = pollfd(fd: fd, events: Int16(POLLOUT), revents: 0)
+        let pr = poll(&pfd, 1, 2000)
+        guard pr > 0 else { return false }
+        var soErr: Int32 = 0
+        var len = socklen_t(MemoryLayout<Int32>.size)
+        guard getsockopt(fd, SOL_SOCKET, SO_ERROR, &soErr, &len) == 0, soErr == 0 else { return false }
+        return true
     }
 
     // MARK: - POSIX socket send/recv (avoids NWConnection timing)

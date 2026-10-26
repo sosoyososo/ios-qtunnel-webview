@@ -22,11 +22,12 @@ final class StoreTests: XCTestCase {
 
     func test_roundtripsAllEntities() {
         let store = Store(defaults: defaults)
-        let server = Server(name: "Test", host: "127.0.0.1", port: 9001)
+        let server = Server(name: "Test", host: "127.0.0.1")
         store.upsertServer(server)
         let cfg = ClientConfig(
             name: "Admin",
             serverId: server.id,
+            tunnelPort: 9001,
             cryptoMethod: .rc4,
             secret: "abcdefghijklmnopqrstuvwxyz0123",
             backendHost: "127.0.0.1",
@@ -50,9 +51,9 @@ final class StoreTests: XCTestCase {
 
     func test_cascadeDeleteServer() {
         let store = Store(defaults: defaults)
-        let server = Server(name: "S", host: "h", port: 1)
+        let server = Server(name: "S", host: "h")
         store.upsertServer(server)
-        let cfg = ClientConfig(name: "C", serverId: server.id, cryptoMethod: .rc4, secret: "x", backendHost: "y", backendPort: 1)
+        let cfg = ClientConfig(name: "C", serverId: server.id, tunnelPort: 1, cryptoMethod: .rc4, secret: "x", backendHost: "y", backendPort: 1)
         store.upsertClientConfig(cfg)
         let inst = ClientInstance(clientConfigId: cfg.id)
         store.upsertClientInstance(inst)
