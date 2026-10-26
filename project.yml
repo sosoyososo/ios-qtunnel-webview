@@ -52,7 +52,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: 8V95JS2XCZ
+        DEVELOPMENT_TEAM: 25FH23Q3GA
 
   QtunnelTests:
     type: bundle.unit-test
