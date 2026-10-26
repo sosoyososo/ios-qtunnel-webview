@@ -43,4 +43,7 @@ Icon
 # debug screenshots
 .test_*.png
 *.png
+# 例外：assets catalog 里的图片是 app 资源，必须入库
+# （否则 AppIcon 被 *.png 吃掉，clone 下来是坏图标）
+!Assets.xcassets/**/*.png
 main/
