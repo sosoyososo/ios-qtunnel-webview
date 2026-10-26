@@ -2,8 +2,9 @@
 
 iOS client for qtunnel encrypted tunnel. SwiftUI, iOS 17+.
 
-> **Spec**: `../docs/specs/2026-09-03-qtunnel-ios-web/00-overview.md`
-> **Design system**: `../design-system/MASTER.md`
+> **Spec**: `docs/specs/2026-09-03-qtunnel-ios-web/00-overview.md`
+> **Design system**: `design-system/MASTER.md`
+> **需求清单**: `TODO.md`
 
 ## Setup
 
@@ -33,6 +34,9 @@ open Qtunnel.xcodeproj
 | `UI/` | SwiftUI 视图 |
 | `Util/` | Password / ServerCmd / Log |
 | `Tests/` | 单元 + 集成测试 |
+| `design-system/` | 设计 token / component / pattern 规范 |
+| `docs/specs/` | 项目 spec（overview / architecture / product / test） |
+| `TODO.md` | 项目级需求清单 |
 
 ## Build & Test
 
@@ -44,11 +48,16 @@ xcodegen generate
 xcodebuild -project Qtunnel.xcodeproj -scheme Qtunnel -sdk iphonesimulator build
 
 # Run tests
-xcodebuild test -project Qtunnel.xcodeproj -scheme Qtunnel -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15'
+xcodebuild test -project Qtunnel.xcodeproj -scheme Qtunnel -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.0'
 ```
+
+> 注：destination 必须带 `OS=`，否则 xcodebuild 会解析成 `OS:latest`
+> 而本机的 iPhone 16 Pro 装的是 18.0，会报 "Unable to find a device matching"。
 
 ## 引用
 
 - qtunnel 协议：`qtunnel-server/doc/PROTOCOL.md`（含 cipher off-by-one）
+  —— 注意：`qtunnel-server/` 是**工作区同级的独立仓库**（sosoyososo/qtunnel），
+  不在本仓库内；本仓库内的 spec / design-system 路径均为仓库内相对路径
 - spec：`docs/specs/2026-09-03-qtunnel-ios-web/`
 - design tokens：`design-system/tokens/`
